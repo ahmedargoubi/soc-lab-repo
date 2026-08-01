@@ -19,30 +19,14 @@ Topologie réseau réelle de la Phase A (Baseline), telle que représentée sur 
 
 ⚠️ **Note sur User_LAN :** le schéma indique `192.168.81.0/24`, alors que les rapports de simulation (Sim 3 — WannaCry) utilisent des IPs en `192.168.8.x` (ex. `192.168.8.118` pour WIN10-HAROUN). À confirmer : s'agit-il bien de `192.168.81.0/24`, ou d'une coquille dans le schéma pour `192.168.8.0/24` ?
 
----
-
-## 2. ⚠️ Confirmation importante — inversion DMZ / Legacy
-
-Ce schéma **inverse** l'attribution de sous-réseaux utilisée dans les rapports Phase A déjà rédigés :
-
-| Zone | Sous-réseau utilisé dans les rapports | Sous-réseau sur ce schéma |
-|---|---|---|
-| DMZ_LAN (Simulation 1 — DVWA) | `192.168.11.177` | `192.168.6.0/24` |
-| Legacy_LAN (Simulation 2 — Metasploitable2) | `192.168.6.141` | `192.168.11.0/24` |
-
-Cette inversion correspond exactement à l'incohérence déjà anticipée dans le brief initial du projet ("DMZ 192.168.6.0/24 ou 192.168.11.0/24 selon la machine — variable selon debug réseau"). Elle est documentée comme un changement réel survenu en cours de projet dans [`troubleshooting-journal.md`](troubleshooting-journal.md) plutôt que corrigée rétroactivement dans les rapports de simulation existants.
-
-**Ce schéma est considéré comme la topologie de référence actuelle** (post-changement). Les rapports de Simulation 1 et 2 restent inchangés et reflètent les IPs réelles au moment de ces attaques.
 
 ---
 
-## 3. Machine de management
+## 2. Machine de management
 
-Une **Management VM** dédiée à l'administration est doublement raccordée :
+Une **Management VM** dédiée à l'administration est  raccordée :
 - une interface sur **Security_LAN** (`192.168.9.0/24`) — pour gérer Wazuh, Velociraptor et MISP
-- une interface sur **Server_LAN** (`192.168.7.0/24`) — pour l'administration directe de l'Active Directory (`TEKUP-DC`)
 
-Cette machine ne passe pas par OPNsense pour accéder à ces deux zones — elle y est directement raccordée en tant qu'hôte de gestion.
 
 ---
 
