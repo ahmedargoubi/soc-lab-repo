@@ -12,7 +12,7 @@ Topologie réseau réelle de la Phase A (Baseline), telle que représentée sur 
 |---|---|---|
 | **Security_LAN** | `192.168.9.0/24` | Wazuh Manager, Velociraptor, MISP (Threat Sharing) — appliance Ubuntu Server unique |
 | **Server_LAN** | `192.168.7.0/24` | AD-DC (Windows Server — `TEKUP-DC`) |
-| **User_LAN** | `192.168.81.0/24` ⚠️ *(à confirmer — voir note ci-dessous)* | Win10-Client (AHMED), Win10-Client (HAROUN), CentOS client |
+| **User_LAN** | `192.168.8.0/24` ⚠️ *(à confirmer — voir note ci-dessous)* | Win10-Client (AHMED), Win10-Client (HAROUN), CentOS client |
 | **DMZ_LAN** | `192.168.6.0/24` | DVWA (Ubuntu Server) |
 | **Legacy_LAN** | `192.168.11.0/24` | Metasploitable2 |
 | **Attacker** | — | Kali Linux — `192.168.163.164` |
