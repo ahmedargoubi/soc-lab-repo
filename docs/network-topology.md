@@ -2,7 +2,7 @@
 
 Topologie réseau réelle de la Phase A (Baseline), telle que représentée sur le schéma [`diagrams/phase-a-topology.png`](/soc-lab-repo/network/diagrams/phase-a-topology.png).
 
-![Phase A Topology](/soc-lab-repo/network/diagrams/phase-a-topology.png)
+![Phase A Topology](../network/diagrams/phase-a-topology.png)
 
 ---
 
