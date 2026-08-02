@@ -10,7 +10,8 @@
 
 A Red Team operator successfully executed a multi‑stage Active Directory attack chain:
 
-1. **LLMNR/NBT‑NS Poisoning** (Responder) – captured the NTLMv2 hash of the user `PROJET\ahmed`. <br>
+1. **LLMNR/NBT‑NS Poisoning** (Responder) – captured the NTLMv2 hash of the user `PROJET\ahmed`. <br> <br>
+
 ![Phase A Topology](phase1-simulations/cap56.png)
 
 2. **Offline Cracking** – cracked the hash using John the Ripper, recovering the password `TempPass123!`.
