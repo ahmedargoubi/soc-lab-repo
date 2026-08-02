@@ -1,4 +1,4 @@
-<img width="408" height="538" alt="Capture d&#39;écran 2026-07-16 201735" src="https://github.com/user-attachments/assets/8efcb7d2-e970-40ce-8ce7-62aabd098f73" /># Simulation 4: Active Directory – LLMNR Poisoning, Kerberoasting, Lateral Movement & AD Reconnaissance
+# Simulation 4: Active Directory – LLMNR Poisoning, Kerberoasting, Lateral Movement & AD Reconnaissance
 
 ## 1. Executive Summary
 
