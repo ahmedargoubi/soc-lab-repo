@@ -8,7 +8,7 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
 - Source : `opnsense.org/download`
 - Architecture : **AMD64**
 - Format : **dvd / iso**
-
+![Phase A Topology](config-images/cap1.png)
 ### 1.2 — Création de la VM (VMware Workstation)
 - Guest OS : **FreeBSD 64-bit**
 - RAM : 2 GB (3 GB temporairement pendant l'installation si le pool ZFS l'exige)
