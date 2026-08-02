@@ -210,6 +210,9 @@ Velociraptor VQL queries were executed on the `dmz` client to collect:
 | DMZ (11.177) → Legacy (6.1) | ❌ Blocked | OPNsense default deny |
 | DMZ (11.177) → Internet | ❌ Blocked | No outbound NAT |
 
+![Phase A Topology](phase1-simulations/cap6.png)
+
+
 **Conclusion:** Network segmentation **held**. No lateral movement was possible from the DMZ to other zones. This demonstrates effective network segmentation controls.
 
 ### 5.3 – Remediation Plan
