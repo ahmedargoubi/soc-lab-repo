@@ -36,8 +36,16 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
 
 
 ![Phase A Topology](config_images/cap4.png)
+
+
 5. Définir le mot de passe root
+
+
 ![Phase A Topology](config_images/cap3.png)
+
+
+
+
 6. **Complete Install**
 
 
