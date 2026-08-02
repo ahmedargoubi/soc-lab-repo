@@ -10,6 +10,8 @@
 
 A Red Team operator executed the WannaCry ransomware sample on a Windows 10 client in the User_LAN zone. The malware successfully executed, displayed the ransom note, attempted to encrypt files, created persistence mechanisms, and attempted to reach the killswitch domain (which was blocked by network segmentation). The attacker had local administrator privileges (via the `haroun` domain admin account), allowing the malware to disable Windows Defender and execute without restriction.
 
+![Phase A Topology](phase1-simulations/cap300.png)
+
 **Detection:** Wazuh FIM (syscheck) detected the file modifications in real‑time (TTD ≈ 9 seconds).  
 **Investigation:** Velociraptor collected forensic evidence (encrypted files, registry persistence, processes).  
 **CTI:** IOCs were collected and published in MISP for future threat intelligence sharing.  
@@ -27,6 +29,8 @@ A Red Team operator executed the WannaCry ransomware sample on a Windows 10 clie
 | 553 | File deleted | T1070 (Defense Evasion) | ✅ True Positive |
 | 550 | Integrity checksum changed | T1486 (Impact) | ✅ True Positive |
 | 100001 (Custom) | .WNCRYT file creation | T1486 (Impact) | ✅ True Positive |
+
+![Phase A Topology](phase1-simulations/cap36.png)
 
 ### 2.2 – Detection Gap & Custom Rules
 
@@ -86,6 +90,9 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 | 3384 | @WanaDecryptor@.exe | `C:\Users\haroun\Desktop\@WanaDecryptor@.exe` | haroun |
 | 18388 | wannacry.exe | `C:\Users\haroun\Downloads\Ransomware.WannaCry\wannacry.exe` | haroun |
 
+![Phase A Topology](phase1-simulations/cap301.png)
+
+
 **Conclusion:** The attacker executed the ransomware manually, which spawned `tasksche.exe` (the encryption module) and the ransom note GUI (`@WanaDecryptor@.exe`).
 
 #### File System Artifacts
@@ -97,6 +104,9 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 | `C:\Users\haroun\AppData\Local\Temp\*.WNCRYT` | Encrypted files (7 files) | – |
 | `C:\Users\haroun\Desktop\@Please_Read_Me@.txt` | Ransom note | – |
 
+![Phase A Topology](phase1-simulations/cap304.png)
+
+
 #### Registry Persistence
 
 | Key | Value | Data |
@@ -105,10 +115,7 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 | `HKLM\SOFTWARE\WanaCrypt0r` | `Bitcoin` | `12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw` |
 | `HKLM\SOFTWARE\WanaCrypt0r` | `Killswitch` | `www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com` |
 
-#### Network Connections
-
-- **No outbound SMB scans** (port 445) were detected – segmentation held.
-- **Killswitch domain** was not reachable (internet blocked).
+![Phase A Topology](phase1-simulations/cap302.png)
 
 ### 3.4 – Chronology
 
@@ -126,39 +133,17 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 
 - **User Context:** The malware ran under `haroun`, who is a **Domain Admin** (from the AD screenshot, `haroun` is a member of `Domain Admins`).
 - **Impact:** An attacker gaining access to `haroun`'s account could disable security controls (e.g., Windows Defender) without UAC elevation, as the account already has administrative privileges.
+
+![Phase A Topology](phase1-simulations/cap305.png)
+
 - **Evidence:** Windows Defender real‑time protection was turned off before execution, indicating the attacker had sufficient privileges.
 
 ---
 
 ## 4. CTI – Threat Intelligence (MITRE ATT&CK)
 
-### 4.1 – MITRE ATT&CK Mapping
 
-| Tactic | Technique ID | Technique Name | Evidence |
-|--------|--------------|----------------|----------|
-| Execution | T1059.001 | PowerShell / Command and Scripting Interpreter | Manual execution of WannaCry.exe |
-| Persistence | T1547.001 | Registry Run Keys / Startup Folder | `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` |
-| Persistence | T1136.001 | Create Account: Local Account | Not observed |
-| Impact | T1486 | Data Encrypted for Impact | `.WNCRYT` files created |
-| Impact | T1529 | System Shutdown/Reboot | Not observed |
-| Defense Evasion | T1070.004 | File Deletion | `WannaCry.exe` deleted (FIM Rule 553) |
-| Discovery | T1083 | File and Directory Discovery | Ransomware scanned for files to encrypt |
-| Command & Control | T1105 | Ingress Tool Transfer | Killswitch domain attempted (blocked) |
-
-### 4.2 – Indicators of Compromise (IOCs)
-
-| Type | Value |
-|------|-------|
-| **SHA256** | `ed01ebfbc9eb5b8e5454f4d01bf5f1071661840480439c6e5babe8e080e41aa` |
-| **SHA1** | `5ff465faabcb0f0150d1a3ab2c2e74f3a4426467` |
-| **MD5** | `84c82835a5d21bbc7f5a61706d8ab549` |
-| **SHA256 (bmp)** | `d5e0e8694ddc0548d8e6b87c83d50f4ab85c1debadb106da6a794c3e746f4fa` |
-| **Filenames** | `WannaCry.exe`, `tasksche.exe`, `@WanaDecryptor@.exe`, `@Please_Read_Me@.txt`, `@WanaDecryptor@.bmp`, `*.WNCRYT` |
-| **Domain** | `www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com` |
-| **Bitcoin Address** | `12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw` |
-| **Registry Key** | `HKLM\SOFTWARE\WanaCrypt0r` |
-
-### 4.3 – MISP Event
+###  MISP Event
 
 - **Event Created:** 2026-07-31
 - **Event Info:** WannaCry Ransomware Simulation – Windows 10 Client
@@ -173,6 +158,9 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 - `sha256: ed01ebfbc9eb5b8e5454f4d01bf5f1071661840480439c6e5babe8e080e41aa`
 - `domain: www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com`
 - `btc: 12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw`
+
+
+![Phase A Topology](phase1-simulations/cap49.png)
 
 ---
 
@@ -205,8 +193,10 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 
 ### 5.3 – Privilege Issue Identified
 
-- **User `ahmed` (PROJET\ahmed):** Had local admin privileges, could disable antivirus.
-- **User `haroun` (PROJET\haroun):** Also a **Domain Admin** – could disable Windows Defender without UAC prompt.
+- **User `haroun` (PROJET\haroun):Had local admin privileges – could disable Windows Defender without UAC prompt.
+
+![Phase A Topology](phase1-simulations/cap306.png)
+  
 - **Risk:** An attacker gaining access to these accounts could disable security controls.
 
 **Phase B Fix:** Enforce **Least Privilege** – remove `haroun` from `Domain Admins` and `Administrators` groups; use dedicated admin accounts for privileged tasks.
@@ -274,23 +264,9 @@ Velociraptor VQL queries were executed on the `WIN10-HAROUN` client to collect:
 
 ---
 
-## 7. Screenshots
 
-| Step | Screenshot |
-|------|------------|
-| WannaCry ransom note | ✅ `Capture d'écran 2026-07-31 184320.png` |
-| Wazuh FIM alerts (Rule 554, 553, 550) | ✅ `Capture d'écran 2026-07-31 180950.png` |
-| Wazuh alert details (WannaCry.exe) | ✅ `Capture d'écran 2026-07-31 181018.png` |
-| Wazuh alert details (@WanaDecryptor@.bmp) | ✅ `Capture d'écran 2026-07-31 182224.png` |
-| Velociraptor .WNCRYT files | ✅ `Capture d'écran 2026-07-31 203123.png` |
-| Velociraptor processes | ✅ `Capture d'écran 2026-07-28 205948.png` |
-| MISP IOCs | ✅ `Capture d'écran 2026-07-31 184044.png` |
-| Defender disabled (before execution) | ✅ `Capture d'écran 2026-07-27 190515.png` |
-| Domain Admin privileges (haroun) | ✅ `Capture d'écran 2026-07-16 201735.png` |
 
----
-
-## 8. Conclusion
+## 7. Conclusion
 
 The WannaCry ransomware simulation successfully demonstrated the detection, investigation, and response capabilities of the SOC lab:
 
