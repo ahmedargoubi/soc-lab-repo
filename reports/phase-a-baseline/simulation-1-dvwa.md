@@ -267,23 +267,10 @@ Velociraptor VQL queries were executed on the `dmz` client to collect:
 | **Alert Automation** | Automate alerts for SQLi data exfiltration to the SOC via email/teams. |
 | **Blocking** | Use Shuffle to automatically block attacker IPs in OPNsense upon detection. |
 
----
-
-## 7. Screenshots
-
-| Step | Screenshot |
-|------|------------|
-| nmap scan (reconnaissance) | ✅ `Capture d'écran 2026-07-29 120815.png` |
-| nmap service detection | ✅ `Capture d'écran 2026-07-29 121453.png` |
-| SQL Injection (hashes) | ✅ `Capture d'écran 2026-07-29 122209.png` |
-| Command Injection (reverse shell) | ✅ `Capture d'écran 2026-07-29 131436.png` |
-| Wazuh alerts (31106, 31164) | ✅ `Capture d'écran 2026-07-29 122434.png` |
-| Wazuh MITRE mapping (T1595.002) | ✅ `Capture d'écran 2026-07-29 121926.png` |
-| Velociraptor – process list | ✅ `Capture d'écran 2026-07-29 134130.png` |
 
 ---
 
-## 8. Conclusion
+## 7. Conclusion
 
 The DMZ‑web server was successfully compromised via DVWA vulnerabilities. The attacker obtained a reverse shell as `www-data`, established persistence, and exfiltrated credentials. Privilege escalation was prevented by system hardening. Wazuh detected the attack in real‑time, and Velociraptor provided detailed forensic evidence.
 
