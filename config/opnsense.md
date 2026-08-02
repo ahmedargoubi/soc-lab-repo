@@ -11,12 +11,13 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
 ![Phase A Topology](config_images/cap1.png)
 ### 1.2 — Création de la VM (VMware Workstation)
 - Guest OS : **FreeBSD 64-bit**
-- RAM : 2 GB (3 GB temporairement pendant l'installation si le pool ZFS l'exige)
+- RAM : 4 GB 
 - Disque : 20 GB
 - **6 adaptateurs réseau**, un par zone (Custom : DMZ, User LAN, Server LAN, Security LAN, Legacy, Attacker/NAT)
-![Phase A Topology](config_images/cap7.png)
+![Phase A Topology](config_images/cap9.png)
 ### 1.3 — Installation
 1. Sélectionner **Install (UFS)** — pas ZFS (empreinte mémoire plus légère, adaptée à une VM pare-feu à 2 Go de RAM)
+![Phase A Topology](config_images/cap7.png)
 2. Clavier → défaut (ou français si AZERTY)
 3. Sélection du disque → choisir le disque virtuel réel (`da0` ou `ada0` selon le contrôleur SCSI/SATA), **jamais** le lecteur CD-ROM
 4. Confirmer la destruction du disque → **YES**
