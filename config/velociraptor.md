@@ -9,6 +9,9 @@ mkdir ~/velociraptor
 cd ~/velociraptor
 ```
 
+![Phase A Topology](config_screens/cap100.png)
+
+
 ### Téléchargement du binaire (dernière version Linux)
 ```bash
 curl -s https://api.github.com/repos/Velocidex/velociraptor/releases/latest \
@@ -17,6 +20,8 @@ curl -s https://api.github.com/repos/Velocidex/velociraptor/releases/latest \
   | xargs curl -L -o velociraptor
 chmod +x velociraptor
 ```
+
+![Phase A Topology](config_screens/cap101.png)
 
 ## 2. Pourquoi déploiement natif et non Docker
 
@@ -64,6 +69,9 @@ sudo mkdir -p /etc/velociraptor
 sudo cp ~/velociraptor/server.config.yaml /etc/velociraptor/server.config.yaml
 ```
 
+![Phase A Topology](config_screens/cap102.png)
+
+
 ```bash
 sudo tee /etc/systemd/system/velociraptor.service << 'EOF'
 [Unit]
@@ -87,12 +95,16 @@ sudo systemctl start velociraptor
 sudo systemctl status velociraptor
 ```
 
+![Phase A Topology](config_screens/cap104.png)
+
 ## 7. ⚠️ Correctif critique — GUI accessible uniquement en local
 
 Après démarrage, vérifier l'adresse d'écoute réelle :
 ```bash
 sudo ss -tulnp | grep -E '8000|8889'
 ```
+
+![Phase A Topology](config_screens/cap8.png)
 
 **Si `8889` apparaît en `127.0.0.1:8889` au lieu de `0.0.0.0:8889`** — c'est le bug root-cause documenté en section 2. Corriger :
 ```bash
@@ -115,6 +127,9 @@ https://<IP-Security-Core>:8889
 ```
 Identifiants : le compte `admin` créé à l'étape 4.
 
+
+![Phase A Topology](config_screens/cap9.png)
+
 ## 9. Firewall — ports requis
 
 | Port | Usage |
@@ -123,6 +138,9 @@ Identifiants : le compte `admin` créé à l'étape 4.
 | 8889 | Interface GUI web (accès analyste uniquement, pas les agents) |
 
 Alias OPNsense `Velociraptor_Client_Port` = `8000` uniquement — les agents n'ont jamais besoin d'atteindre le port 8889.
+
+
+![Phase A Topology](config_screens/cap10.png)
 
 ## 10. Déploiement des agents
 
@@ -165,6 +183,8 @@ sudo systemctl enable velociraptor-client
 sudo systemctl start velociraptor-client
 ```
 
+![Phase A Topology](config_screens/cap11.png)
+
 ### 10.3 — Agent Windows
 ```powershell
 mkdir C:\velociraptor
@@ -176,6 +196,9 @@ Invoke-WebRequest -Uri https://github.com/Velocidex/velociraptor/releases/downlo
 C:\velociraptor\velociraptor.exe --config C:\velociraptor\client.config.yaml service install
 Get-Service Velociraptor
 ```
+
+![Phase A Topology](config_screens/cap16.png)
+
 
 ## 11. Vérification des agents connectés
 
