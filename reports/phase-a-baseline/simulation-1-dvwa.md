@@ -31,7 +31,7 @@ Privilege escalation to `root` was attempted but failed due to system hardening 
 
 
 ![Phase A Topology](phase1-simulations/cap46.png) <br>
-![Phase A Topology](phase1-simulations/cap46.png)
+![Phase A Topology](phase1-simulations/cap4.png)
 
 
 ### 2.2 – Detection Gap & Custom Rules
