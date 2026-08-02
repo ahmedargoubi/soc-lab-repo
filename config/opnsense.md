@@ -17,11 +17,24 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
 ![Phase A Topology](config_images/cap9.png)
 ### 1.3 — Installation
 1. Sélectionner **Install (UFS)** — pas ZFS (empreinte mémoire plus légère, adaptée à une VM pare-feu à 2 Go de RAM)
+
+
+
 ![Phase A Topology](config_images/cap7.png)
+
+
+
+
 2. Clavier → défaut (ou français si AZERTY)
 3. Sélection du disque → choisir le disque virtuel réel (`da0` ou `ada0` selon le contrôleur SCSI/SATA), **jamais** le lecteur CD-ROM
+
+
 ![Phase A Topology](config_images/cap5.png)
+
+
 4. Confirmer la destruction du disque → **YES**
+
+
 ![Phase A Topology](config_images/cap4.png)
 5. Définir le mot de passe root
 ![Phase A Topology](config_images/cap3.png)
