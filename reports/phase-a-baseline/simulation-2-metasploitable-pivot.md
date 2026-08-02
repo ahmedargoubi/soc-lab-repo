@@ -81,7 +81,7 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 | Legacy (6.141) → Server_LAN (7.139) | ❌ Blocked | 100% packet loss |
 | Legacy (6.141) → Security_LAN (9.133) | ❌ Blocked | 100% packet loss |
 
-![Phase A Topology](phase1-simulations/cap15.png)
+![Phase A Topology](phase1-simulations/cap17.png)
 
 **Conclusion:** Network segmentation **held**. No lateral movement possible.
 
