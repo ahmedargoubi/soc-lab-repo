@@ -79,7 +79,7 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
 | OPT2 (em3) | User_LAN | 192.168.8.1/24 | 192.168.8.100–200 |
 | OPT3 (em4) | Legacy | 192.168.11.1/24 | 192.168.11.100–200 |
 | OPT4 (em5) | Server_LAN | 192.168.7.1/24 | 192.168.7.100–200 |
-| WAN (em0) | Attacker | 192.168.163.1/24 (ou DHCP via NAT VMware) | — (pas de serveur DHCP côté WAN) |
+| WAN (em0) | Attacker | 192.168.163.150/24 (ou DHCP via NAT VMware) | — (pas de serveur DHCP côté WAN) |
 
 Pour chaque interface (option 2 du menu console) :
 ```
