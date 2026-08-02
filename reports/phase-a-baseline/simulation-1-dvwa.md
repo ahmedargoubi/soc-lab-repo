@@ -90,6 +90,9 @@ Velociraptor VQL queries were executed on the `dmz` client to collect:
 | 3614 | python3 | Python reverse shell socket connection | www-data |
 | 3652 | bash | `/bin/bash` (upgraded TTY) | www-data |
 
+![Phase A Topology](phase1-simulations/cap14.png)
+
+
 **Conclusion:** The attacker maintained an active reverse shell to `192.168.163.164:4444`.
 
 #### File System Artifacts
@@ -158,6 +161,9 @@ Velociraptor VQL queries were executed on the `dmz` client to collect:
 | Command & Control | T1071.001 | Web Protocols | Reverse shell over TCP port 4444 |
 | Command & Control | T1572 | Protocol Tunneling | Reverse shell using Python socket |
 | Defense Evasion | T1027 | Obfuscated Files or Info | Python one-liner, obfuscated webshell |
+
+![Phase A Topology](phase1-simulations/cap76.png)
+
 
 ### 4.2 – Indicators of Compromise (IOCs)
 
