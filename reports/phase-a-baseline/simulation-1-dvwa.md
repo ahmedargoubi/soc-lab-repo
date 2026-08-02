@@ -29,6 +29,11 @@ Privilege escalation to `root` was attempted but failed due to system hardening 
 | 31151 | Multiple web server 400 errors (nmap scan) | T1595.002 (Reconnaissance) | ✅ True Positive |
 | 31101 | Web server 400 error code | T1595.002 (Reconnaissance) | ✅ True Positive |
 
+
+![Phase A Topology](phase1-simulations/cap46.png) <br>
+![Phase A Topology](phase1-simulations/cap46.png)
+
+
 ### 2.2 – Detection Gap & Custom Rules
 
 **Gap Identified:**  
