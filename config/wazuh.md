@@ -25,6 +25,9 @@ sudo tar -xf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt -O
 https://<IP-Security-Core>
 ```
 
+![Phase A Topology](config_images/cap40.png)
+
+
 ## 2. Vérification de l'état du manager
 
 ```bash
@@ -32,7 +35,14 @@ sudo systemctl status wazuh-manager
 sudo /var/ossec/bin/wazuh-control status
 ```
 
+![Phase A Topology](config_images/cap41.png)
+
+
+
 Tous les daemons doivent afficher `is running` : `wazuh-modulesd`, `wazuh-monitord`, `wazuh-logcollector`, `wazuh-remoted`, `wazuh-syscheckd`, `wazuh-analysisd`, `wazuh-execd`, `wazuh-db`, `wazuh-authd`, `wazuh-integratord`, `wazuh-apid`.
+
+
+![Phase A Topology](config_images/cap42.png)
 
 **Si plusieurs daemons montrent `failed`** (bug rencontré à plusieurs reprises dans ce lab, souvent lié à la pression mémoire causée par Docker/MISP/Velociraptor tournant en parallèle sur la même VM) :
 ```bash
@@ -54,6 +64,9 @@ sudo /var/ossec/bin/manage_agents
 # (A)dd, (E)xtract key, (L)ist, (R)emove, (Q)uit
 ```
 
+
+![Phase A Topology](config_images/cap43.png)
+
 ### ⚠️ Piège récurrent : "Duplicate agent name"
 Si un agent est réinstallé/renommé sans avoir été explicitement supprimé du manager au préalable, l'enregistrement échoue avec `ERROR: Duplicate agent name`. **Toujours supprimer l'ancien agent (option R) avant tout nouvel essai d'enrôlement** — ne jamais relancer `agent-auth` plusieurs fois de suite sans nettoyer, cela empile des ID orphelins (022 → 023 → 024...).
 
@@ -68,6 +81,10 @@ sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
 sudo systemctl status wazuh-agent
 ```
+
+![Phase A Topology](config_images/cap32.png) <br>
+![Phase A Topology](config_images/cap33.png)
+
 
 ## 5. Déploiement agent — Linux (CentOS/RHEL)
 
@@ -89,6 +106,11 @@ sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
 ```
+
+![Phase A Topology](config_images/cap21.png) <br>
+![Phase A Topology](config_images/cap22.png) <br>
+![Phase A Topology](config_images/cap23.png) <br>
+
 
 ## 6. Déploiement agent — Windows
 
@@ -122,6 +144,8 @@ Get-Content "C:\Program Files (x86)\ossec-agent\ossec.log" -Tail 30   # Windows
 sudo tail -f /var/ossec/logs/ossec.log                                 # Linux
 ```
 
+![Phase A Topology](config_images/cap1.png)
+
 ### 8.2 — Adresse manager `0.0.0.0` dans la config
 ```powershell
 notepad "C:\Program Files (x86)\ossec-agent\ossec.conf"
@@ -136,6 +160,9 @@ Corriger manuellement :
   </server>
 </client>
 ```
+
+![Phase A Topology](config_images/cap20.png)
+
 
 ### 8.3 — Ré-enrôlement propre après un échec
 ```powershell
