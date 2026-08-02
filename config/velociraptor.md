@@ -113,7 +113,7 @@ sudo nano /etc/velociraptor/server.config.yaml
 Chercher la section `GUI:` et forcer :
 ```yaml
 GUI:
-  bind_address: 0.0.0.0
+  bind_address: 192.168.9.133
 ```
 ```bash
 sudo systemctl restart velociraptor
