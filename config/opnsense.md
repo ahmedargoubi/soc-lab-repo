@@ -20,12 +20,15 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
 ![Phase A Topology](config_images/cap7.png)
 2. Clavier → défaut (ou français si AZERTY)
 3. Sélection du disque → choisir le disque virtuel réel (`da0` ou `ada0` selon le contrôleur SCSI/SATA), **jamais** le lecteur CD-ROM
+![Phase A Topology](config_images/cap5.png)
 4. Confirmer la destruction du disque → **YES**
+![Phase A Topology](config_images/cap4.png)
 5. Définir le mot de passe root
+![Phase A Topology](config_images/cap3.png)
 6. **Complete Install**
-7. **Avant le redémarrage** : déconnecter l'ISO du lecteur CD/DVD dans les paramètres VMware pour forcer le démarrage sur le disque installé
 
-> **Point de dépannage critique** : si l'installeur redémarre systématiquement en mode Live (RAM), vérifier que l'ISO est bien retiré du lecteur CD après installation, et envisager de basculer le contrôleur de disque de **SCSI vers SATA** — un bug connu de compatibilité VMware/FreeBSD provoque exactement ce symptôme sur certaines configurations.
+
+
 
 ## 2. Attribution des interfaces (console, option 1)
 
@@ -41,6 +44,8 @@ Guide complet des étapes et commandes utilisées pour installer, configurer et 
    Optional 4: em5
    Confirm: y
 ```
+
+![Phase A Topology](config_images/cap11.png)
 
 ## 3. Adressage IP (console, option 2)
 
@@ -75,7 +80,13 @@ Revert to HTTP? → N (garder HTTPS)
 - ☐ **Block private networks** → décocher
 - ☐ **Block bogon networks** → décocher
 
+![Phase A Topology](config_images/cap12.png)
+
+
 Sans cela, tout le trafic Attacker→cible est silencieusement rejeté avant même l'évaluation des règles de pare-feu.
+
+
+
 
 ## 5. Alias de pare-feu
 
@@ -108,6 +119,8 @@ Sans cela, tout le trafic Attacker→cible est silencieusement rejeté avant mê
 8000
 ```
 
+![Phase A Topology](config_images/cap14.png)
+
 ## 6. Règles de pare-feu par interface
 
 Voir le fichier séparé [`network/opnsense-firewall-rules.md`](../network/opnsense-firewall-rules.md) pour la liste complète et à jour des règles par zone.
@@ -119,12 +132,12 @@ Voir le fichier séparé [`network/opnsense-firewall-rules.md`](../network/opnse
 1. `System → Firmware → Plugins` → rechercher `os-suricata` → installer
 2. `Services → Intrusion Detection → Administration` :
    - ☑ Enabled
-   - Interfaces : `securitylan`, `WAN`, `DMZ`
+   - Interfaces : `securitylan`, `WAN`, `DMZ`, `serverlan`
 3. `Services → Intrusion Detection → Download` :
    - ☑ ET Open
    - **Download & Update Rules**
 4. `Services → Intrusion Detection → Rules` : activer la catégorie ET Open
-
+![Phase A Topology](config_images/cap15.png)
 ## 8. Commandes de diagnostic utiles (console shell, option 8)
 
 ```bash
