@@ -1,4 +1,4 @@
-# Simulation 4: Active Directory – LLMNR Poisoning, Kerberoasting, Lateral Movement & AD Reconnaissance
+<img width="408" height="538" alt="Capture d&#39;écran 2026-07-16 201735" src="https://github.com/user-attachments/assets/8efcb7d2-e970-40ce-8ce7-62aabd098f73" /># Simulation 4: Active Directory – LLMNR Poisoning, Kerberoasting, Lateral Movement & AD Reconnaissance
 
 ## 1. Executive Summary
 
@@ -10,11 +10,24 @@
 
 A Red Team operator successfully executed a multi‑stage Active Directory attack chain:
 
-1. **LLMNR/NBT‑NS Poisoning** (Responder) – captured the NTLMv2 hash of the user `PROJET\ahmed`.
+1. **LLMNR/NBT‑NS Poisoning** (Responder) – captured the NTLMv2 hash of the user `PROJET\ahmed`. <br>
+![Phase A Topology](phase1-simulations/cap56.png)
+
 2. **Offline Cracking** – cracked the hash using John the Ripper, recovering the password `TempPass123!`.
-3. **Lateral Movement** – used `impacket-wmiexec` with the cracked credentials to authenticate to the Domain Controller (`TEKUP-DC`) as `PROJET\Administrator`.
-4. **Persistence** – created a backdoor Domain Admin account (`backdoor`).
+<br>
+![Phase A Topology](phase1-simulations/cap58.png) <br>
+  
+3. **Lateral Movement** – used `impacket-wmiexec` with the cracked credentials to authenticate to the Domain Controller (`TEKUP-DC`) as `PROJET\Administrator`. <br>
+
+4. **Persistence** – created a backdoor Domain Admin account (`backdoor`).<br>
+
+  ![Phase A Topology](phase1-simulations/cap61.png) <br>
+  
 5. **AD Reconnaissance** – used SharpHound/BloodHound to enumerate the Active Directory environment, identifying privilege escalation paths, Kerberoastable accounts, and misconfigurations.
+
+
+
+
 
 **Detection:** Wazuh successfully detected the attack via Windows Event Logs (Rule 92652 – Pass‑the‑Hash). Suricata did not alert due to missing network‑based rules (a gap to be addressed in Phase B).  
 **Investigation:** Velociraptor can be used to collect Event 4624 logs and process artifacts.  
@@ -33,6 +46,8 @@ A Red Team operator successfully executed a multi‑stage Active Directory attac
 | **60106** | Windows Logon Success (Event 4624) | T1078 | ✅ True Positive |
 | **67028** | Special privileges assigned to new logon (Event 4672) | T1078 | ✅ True Positive |
 
+![Phase A Topology](phase1-simulations/cap59.png)
+
 ### 2.2 – Detailed Log Analysis
 
 **Rule 92652 – Pass‑the‑Hash Detection:**
@@ -46,6 +61,9 @@ A Red Team operator successfully executed a multi‑stage Active Directory attac
 | **Source Port** | 38812 |
 | **Target User** | Administrator |
 | **Target Computer** | TEKUP-DC (192.168.7.139) |
+
+
+![Phase A Topology](phase1-simulations/cap60.png)
 
 **Observation:** The alert correctly identified a remote NTLM authentication from an external IP as a potential Pass‑the‑Hash attack. This is a **high‑confidence detection**.
 
@@ -106,33 +124,7 @@ Velociraptor VQL queries can be executed on the Domain Controller (`TEKUP-DC`) t
 
 ## 4. CTI – Threat Intelligence (MITRE ATT&CK)
 
-### 4.1 – MITRE ATT&CK Mapping
-
-| Tactic | Technique ID | Technique Name | Evidence |
-|--------|--------------|----------------|----------|
-| Reconnaissance | T1595.002 | Vulnerability Scanning | nmap scan |
-| Reconnaissance | T1592.002 | Software Identification | nmap service detection |
-| Initial Access | T1190 | Exploit Public-Facing Application | SQL injection (previous simulation) |
-| Initial Access | T1203 | Exploitation for Client Execution | Command Injection → reverse shell |
-| Execution | T1059.004 | Command and Scripting Interpreter | Python reverse shell execution |
-| Persistence | T1505.003 | Web Shell | `/var/www/html/shell.php` |
-| Persistence | T1037.003 | Cron Job | Attempted cron entry |
-| Persistence | T1546.004 | .bashrc & .profile | Modified `.bashrc` |
-| Credential Access | T1110.001 | Password Guessing / Brute Force | Extracted hashes from `users` table |
-| Credential Access | T1557.001 | LLMNR/NBT‑NS Poisoning | Responder captured NTLM hash |
-| Credential Access | T1550.002 | Pass‑the‑Hash | NTLM authentication from Kali |
-| Collection | T1005 | Data from Local System | Stolen credentials file (`/tmp/stolen_creds.txt`) |
-| Command & Control | T1071.001 | Web Protocols | Reverse shell over TCP port 4444 |
-| Command & Control | T1572 | Protocol Tunneling | Reverse shell using Python socket |
-| Defense Evasion | T1027 | Obfuscated Files or Info | Python one-liner, obfuscated webshell |
-| Lateral Movement | T1021.002 | Remote Services (SMB/WMI) | `wmiexec` used to connect to DC |
-| Privilege Escalation | T1078 | Valid Accounts | Administrator logon (Event 4672) |
-| Persistence | T1136.001 | Create Account: Local Account | `backdoor` user added to Domain Admins |
-| Discovery | T1069.002 | Domain Groups | BloodHound enumeration of AD structure |
-| Discovery | T1087.002 | Domain Account | BloodHound user enumeration |
-| Discovery | T1482 | Domain Trust Discovery | BloodHound trust mapping |
-
-### 4.2 – Active Directory Discovery with BloodHound
+### 4.1 – Active Directory Discovery with BloodHound
 
 To complement the LLMNR poisoning and lateral movement phases, the attacker used **BloodHound** to map the Active Directory attack surface and identify privilege escalation paths.
 
@@ -142,8 +134,10 @@ On the Domain Controller (`TEKUP-DC`), the attacker imported the SharpHound Powe
 
 ```powershell
 PS C:\> . .\SharpHound.ps1
-PS C:\> Invoke-BloodHound -CollectionMethod All -Domain PROJET.local -ZipFileName 'data.zip'
+PS C:\> Invoke-BloodHound -CollectionMethod All -Domain PROJET.local -ZipFileName 'file.zip'
 ```
+
+![Phase A Topology](phase1-simulations/cap70.png)
 
 **Collection Results:**
 
@@ -165,6 +159,9 @@ After importing the collected data, the attacker used the BloodHound GUI to run 
 - **Shortest Paths to Domain Admin** – Visualized attack paths from low‑privilege users to high‑value targets.
 - **Find Computers where Domain Users are Local Admin** – Identified misconfigurations.
 - **Find Dangerous Privileges for Domain Users Groups** – Highlighted ACL misconfigurations (e.g., `WriteOwner`, `GenericAll`).
+
+
+![Phase A Topology](phase1-simulations/cap75.png)
 
 **Key Insight:** The attacker confirmed that the user `ahmed` (initially compromised) had paths to Domain Admins via membership in privileged groups or ACL abuse, validating the attack chain.
 
@@ -290,19 +287,6 @@ After importing the collected data, the attacker used the BloodHound GUI to run 
 
 ---
 
-## 7. Screenshots
-
-| Step | Screenshot |
-|---|---|
-| Responder capture (NTLM hash) | ✅ `Capture d'écran 2026-08-01 143317.png` |
-| John cracked password | ✅ `Capture d'écran 2026-08-01 143353.png` |
-| wmiexec shell on TEKUP-DC | ✅ `Capture d'écran 2026-08-01 145600.png` |
-| Wazuh alert (Rule 92652) | ✅ `Capture d'écran 2026-08-01 144646.png` |
-| Wazuh log details (Event 4624) | ✅ `Capture d'écran 2026-08-01 144824.png` |
-| SharpHound collection output | ✅ `Capture d'écran 2026-08-01 191549.png` |
-| BloodHound analysis interface | ✅ `Capture d'écran 2026-08-01 191624.png` & `191639.png` |
-
----
 
 ## 8. Conclusion
 
