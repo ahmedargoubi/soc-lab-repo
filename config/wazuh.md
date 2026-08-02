@@ -144,7 +144,7 @@ Get-Content "C:\Program Files (x86)\ossec-agent\ossec.log" -Tail 30   # Windows
 sudo tail -f /var/ossec/logs/ossec.log                                 # Linux
 ```
 
-![Phase A Topology](config_images/cap1.png)
+![Phase A Topology](config_images/cap31.png)
 
 ### 8.2 — Adresse manager `0.0.0.0` dans la config
 ```powershell
