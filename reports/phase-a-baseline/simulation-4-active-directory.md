@@ -14,8 +14,8 @@ A Red Team operator successfully executed a multi‑stage Active Directory attac
 
 ![Phase A Topology](phase1-simulations/cap56.png)
 
-2. **Offline Cracking** – cracked the hash using John the Ripper, recovering the password `TempPass123!`.
-<br>
+2. **Offline Cracking** – cracked the hash using John the Ripper, recovering the password `TempPass123!`.<br>
+
 ![Phase A Topology](phase1-simulations/cap58.png) <br>
   
 3. **Lateral Movement** – used `impacket-wmiexec` with the cracked credentials to authenticate to the Domain Controller (`TEKUP-DC`) as `PROJET\Administrator`. <br>
