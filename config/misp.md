@@ -14,6 +14,9 @@ sudo systemctl start docker
 sudo usermod -aG docker $USER
 ```
 
+![Phase A Topology](config_screens/cap13.png)<br>
+![Phase A Topology](config_screens/cap24.png)
+
 > **Note** : le script officiel `apt-get`/repo Docker classique a échoué sur Ubuntu 26.04 (codename trop récent, non encore reconnu par le dépôt Docker officiel) — le script de convenance `get.docker.com` a résolu ce problème automatiquement.
 
 ## 2. Récupération du projet officiel
@@ -24,6 +27,8 @@ git clone https://github.com/MISP/misp-docker.git
 cd misp-docker
 cp template.env .env
 ```
+
+![Phase A Topology](config_screens/cap29.png)
 
 ## 3. Configuration du fichier `.env`
 
@@ -51,12 +56,17 @@ CORE_HTTPS_PORT=8443
 sudo docker compose up -d
 ```
 
+
+![Phase A Topology](config_screens/cap4.png)
+
 Le premier démarrage télécharge plusieurs images (base de données MariaDB, Redis, modules MISP, cœur MISP) — peut prendre plusieurs minutes selon la connexion.
 
 ### Vérification
 ```bash
 sudo docker compose ps
 ```
+![Phase A Topology](config_screens/cap3.png)
+
 Tous les conteneurs doivent afficher `running` ou `healthy` : `misp-docker-db-1`, `misp-docker-redis-1`, `misp-docker-misp-modules-1`, `misp-docker-misp-core-1`, `misp-docker-mail-1`.
 
 ## 5. Accès à l'interface
@@ -65,6 +75,10 @@ Tous les conteneurs doivent afficher `running` ou `healthy` : `misp-docker-db-1`
 https://<IP-Security-Core>:8443
 ```
 Identifiants : `ADMIN_EMAIL` / `ADMIN_PASSWORD` définis dans `.env`.
+
+
+
+![Phase A Topology](config_screens/cap34.png)
 
 ## 6. Firewall — ports requis
 
