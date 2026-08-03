@@ -15,6 +15,9 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 
 **Constat :** l'attaquant (Kali, techniquement sur le WAN d'OPNsense dans ce lab) a un accès direct autorisé vers `dmz net` et `legacy net` — cohérent avec le scénario Red Team qui cible ces deux zones en premier (Simulations 1 et 2).
 
+
+![Phase A Topology](screens/cap1.png)
+
 ---
 
 ## 2. userlan (User_LAN)
@@ -34,6 +37,10 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 
 **Constat :** c'est précisément la règle `userlan net → 192.168.7.139/32 (AD_Ports)` qui a permis la Simulation 4 (LLMNR poisoning → Pass-the-Hash) — le trafic SMB/NTLM vers l'AD-DC est légitimement nécessaire et donc autorisé, ce qui a aussi permis l'attaque (cf. `reports/phase-a-baseline/simulation-4-active-directory.md`, section 5.2).
 
+
+![Phase A Topology](screens/cap2.png)
+
+
 ---
 
 ## 3. serverlan (Server_LAN)
@@ -51,6 +58,8 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 
 **Constat :** la dernière règle (`serverlan → 192.168.163.164/24`, tout protocole) est notable — elle autorise explicitement le retour de trafic vers la machine attaquante depuis la zone serveur. À vérifier si elle a été ajoutée intentionnellement pour les besoins du lab (ex. reverse shell de test) ou s'il s'agit d'un résidu de configuration à revoir en Phase B.
 
+![Phase A Topology](screens/cap3.png)
+
 ---
 
 ## 4. dmz (DMZ_LAN)
@@ -67,6 +76,8 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 
 ⚠️ **Incohérence d'IP à noter :** la règle `WAN net → 192.168.11.197/32` apparaît sous l'interface **dmz**, alors que le [schéma de topologie](../docs/network-topology.md) assigne `192.168.11.0/24` à la zone **Legacy**, et que le rapport de la Simulation 1 (DVWA) utilise `192.168.11.177` comme IP cible DMZ. Cette règle suggère qu'un hôte `192.168.11.197` a bien existé (à un moment) sur l'interface DMZ — donc potentiellement une **troisième valeur d'IP** pour ce même host au fil du projet (`.177` → `.197`, zone DMZ vs Legacy). Voir [`troubleshooting-journal.md`](../docs/troubleshooting-journal.md) — entrée à ajouter/compléter.
 
+![Phase A Topology](screens/cap4.png)
+
 ---
 
 ## 5. legacy (Legacy_LAN)
@@ -76,6 +87,9 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 **Constat :** cohérent avec le design volontaire de la Simulation 2 — Legacy est la zone la moins instrumentée du lab (pas d'agent Wazuh/Velociraptor, pas de règle de sortie explicite), pour tester la segmentation "à l'aveugle" sans aucune règle de confiance particulière.
 
 ---
+
+![Phase A Topology](screens/cap6.png)
+
 
 ## 6. securitylan (Security_LAN)
 
@@ -88,6 +102,8 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 | IPv4 TCP/UDP | serverlan net, userlan net | `192.168.9.133/32` | Wazuh_Ports | Agents Wazuh → manager, depuis 2 zones |
 
 ⚠️ **Point notable :** la règle `192.168.11.0/24 → 192.168.9.133/32 (Wazuh_Ports)` autorise un hôte de la zone dont l'IP correspond à **Legacy** (selon le schéma de topologie) à parler à Wazuh — alors que le design du lab prévoit qu'**aucun agent Wazuh n'est déployé sur Legacy** (gap volontaire confirmé dans la Simulation 2). Cette règle est peut-être un résidu d'une configuration antérieure (avant l'inversion DMZ/Legacy), à clarifier.
+
+![Phase A Topology](screens/cap5.png)
 
 ---
 
