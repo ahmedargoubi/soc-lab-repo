@@ -119,11 +119,3 @@ Règles de pare-feu réelles, capturées interface par interface depuis OPNsense
 
 ---
 
-## 8. Synthèse — ce que ces règles confirment
-
-| Constat | Détail |
-|---|---|
-| Segmentation par défaut stricte | Chaque zone n'a accès qu'à ce qui est explicitement listé — cohérent avec les résultats "segmentation held" des Simulations 1, 2 et 3 |
-| Legacy = zone non instrumentée | Aucune règle manuelle, aucun agent — gap de détection assumé |
-| Flux AD légitime = vecteur d'attaque Sim 4 | La règle `userlan → serverlan (AD_Ports)` est nécessaire au fonctionnement du domaine, mais c'est ce même flux qui a permis le Pass-the-Hash |
-| Nouvelles incohérences d'IP identifiées | `192.168.11.197` (dmz) et `192.168.11.0/24` (règle Wazuh sous securitylan) s'ajoutent aux incohérences déjà connues entre DMZ et Legacy — à consolider dans le troubleshooting journal |
