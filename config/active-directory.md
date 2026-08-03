@@ -79,23 +79,10 @@ Address: 192.168.7.139
 
 ---
 
-## 2. Essais de jonction de domaine (avant configuration DNS correcte)
 
-Avant que le contrôleur de domaine soit pleinement fonctionnel, plusieurs tentatives de jonction ont échoué avec le message *"That domain couldn't be found. Check the domain name and try again."* :
 
-| Nom de domaine testé | Résultat |
-|---|---|
-| `PROJET.local` | ❌ Domaine introuvable |
-| `TEKUP.local` | ❌ Domaine introuvable |
 
-Ces échecs correspondent à une phase où le DNS des clients ne pointait probablement pas encore vers `TEKUP-DC`, ou le contrôleur n'était pas encore pleinement promu. La jonction a fini par réussir une fois `PROJET.local` pleinement opérationnel.
-
-![Join a domain - Domain not found](AD_screens/join-domain-fail.png)
-*Message "That domain couldn't be found" lors de la tentative de jonction.*
-
----
-
-## 3. Postes clients joints au domaine
+## 2. Postes clients joints au domaine
 
 | Nom de PC (avant jonction) | Nom final | Type |
 |---|---|---|
@@ -112,7 +99,7 @@ Les deux machines apparaissent dans **Active Directory Users and Computers → P
 
 ---
 
-## 4. Comptes utilisateurs créés
+## 3. Comptes utilisateurs créés
 
 Plusieurs comptes ont été créés par copie d'utilisateurs existants (`Copy Object - User`), avec l'option **"Password never expires"** activée systématiquement.
 
@@ -123,19 +110,19 @@ Plusieurs comptes ont été créés par copie d'utilisateurs existants (`Copy Ob
 | SQL service (`SQLservice`) | Haroun Rashid | `SQLservice@PROJET.local` | Compte de service — candidat probable pour Kerberoasting |
 | Mohamed arg (`Mohamed`) | Ahmed arg | `Mohamed@PROJET.local` | Copié depuis un compte standard |
 
-![Création du compte ahmed](AD_screens/cap11.png)
+![Création du compte ahmed](AD_screens/cap11.png)<br>
 *Création du compte ahmed.*
 
-![Création du compte Haroun Rashid](AD_screens/cap14.png)
+![Création du compte Haroun Rashid](AD_screens/cap14.png)<br>
 *Création du compte Haroun Rashid.*
 
-![Copie Haroun Rashid - Password never expires](AD_screens/cap15.png)
+![Copie Haroun Rashid - Password never expires](AD_screens/cap15.png)<br>
 *Copie du compte Haroun Rashid avec option "Password never expires".*
 
-![Création du compte Mohamed arg](AD_screens/cap16.png)
+![Création du compte Mohamed arg](AD_screens/cap16.png)<br>
 *Création du compte Mohamed arg.*
 
-![Password never expires](AD_screens/cap17.png)
+![Password never expires](AD_screens/cap17.png)<br>
 *Définition du mot de passe avec option "Password never expires".*
 
 ### 4.1 – Appartenance aux groupes
@@ -164,7 +151,7 @@ Plusieurs comptes ont été créés par copie d'utilisateurs existants (`Copy Ob
 
 ---
 
-## 5. Service Principal Names (SPN) – candidats Kerberoasting
+## 4. Service Principal Names (SPN) – candidats Kerberoasting
 
 Un SPN a été explicitement ajouté pour le compte `SQLservice` :
 
@@ -190,7 +177,7 @@ Un autre SPN est visible dans les captures (`HYDRA-DC/SQLService.MARVEL.local:60
 
 ---
 
-## 6. Gestion des stratégies de groupe (GPO) — faiblesses intentionnelles
+## 5. Gestion des stratégies de groupe (GPO) — faiblesses intentionnelles
 
 Plusieurs GPO ont été créées ou modifiées pour affaiblir la sécurité du domaine à des fins pédagogiques :
 
@@ -210,7 +197,7 @@ La GPO est visible dans la console Group Policy Management et liée au domaine P
 
 ---
 
-## 7. Partages réseau (SMB)
+## 6. Partages réseau (SMB)
 
 Plusieurs partages ont été créés sur le contrôleur de domaine :
 
@@ -221,35 +208,35 @@ Plusieurs partages ont été créés sur le contrôleur de domaine :
 | hackme | `C:\Shares\hackme` | SMB | Partage volontairement exposé (trop permissif) pour simuler une exfiltration ou un pivot |
 | share (sur AHMED) | `C:\share` | SMB | Partage créé sur le poste client AHMED |
 
-![Partages NETLOGON, SYSVOL, hackme](AD_screens/cap21.png)
+![Partages NETLOGON, SYSVOL, hackme](AD_screens/cap21.png)<br>
 *Partages NETLOGON, SYSVOL et hackme sur le contrôleur de domaine.*
 
-![Profil SMB Share - Quick](AD_screens/cap18.png)
+![Profil SMB Share - Quick](AD_screens/cap18.png)<br>
 *Sélection du profil "SMB Share - Quick" pour le partage hackme.*
 
-![Chemin du partage hackme](AD_screens/cap19.png)
+![Chemin du partage hackme](AD_screens/cap19.png)<br>
 *Chemin du partage : C:\Shares\hackme.*
 
-![Nom du partage hackme](AD_screens/cap20.png)
+![Nom du partage hackme](AD_screens/cap20.png)<br>
 *Nom du partage : hackme.*
 
-![Partage share sur AHMED](AD_screens/cap32.png)
+![Partage share sur AHMED](AD_screens/cap32.png)<br>
 *Partage share créé sur le poste client AHMED.*
 
-![Propriétés du partage share](AD_screens/cap29.png)
+![Propriétés du partage share](AD_screens/cap29.png)<br>
 *Propriétés du partage share sur AHMED.*
 
-![Ajout d'Ahmed comme propriétaire](AD_screens/cap30.png)
+![Ajout d'Ahmed comme propriétaire](AD_screens/cap30.png)<br>
 *Ajout de l'utilisateur Ahmed comme propriétaire du partage.*
 
-![Activation du partage réseau](AD_screens/cap31.png)
+![Activation du partage réseau](AD_screens/cap31.png)<br>
 *Activation du partage réseau et découverte réseau.*
 
 Le partage hackme a été créé avec le profil "SMB Share - Quick" et est accessible depuis les postes du domaine. Il est utilisé dans les simulations de pivot/latéral (notamment Simulation 2) pour démontrer les risques de partages mal sécurisés.
 
 ---
 
-## 8. Configuration Dnsmasq sur OPNsense
+## 7. Configuration Dnsmasq sur OPNsense
 
 Le service Dnsmasq DNS & DHCP sur OPNsense a été configuré pour gérer les zones réseau et les interfaces.
 
@@ -261,7 +248,7 @@ Le service Dnsmasq DNS & DHCP sur OPNsense a été configuré pour gérer les zo
 
 ---
 
-## 9. Récapitulatif des faiblesses intentionnelles introduites
+## 8. Récapitulatif des faiblesses intentionnelles introduites
 
 | Faiblesse | Objectif pédagogique | Simulation liée |
 |---|---|---|
