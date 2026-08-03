@@ -203,7 +203,7 @@ La GPO est visible dans la console Group Policy Management et liée au domaine P
 |---|---|---|
 | haroun cumule Domain Admins + Enterprise Admins + Schema Admins | Démontrer l'impact d'un compte utilisateur sur-privilégié | Sim 3 (WannaCry), Sim 4 (BloodHound) |
 | Compte SQLservice avec SPN et mot de passe n'expirant jamais | Cible Kerberoasting | Sim 4 (AD Attack) |
-| Mot de passe faible sur ahmed (TempPass123!) | Démontrer la faisabilité du cassage offline après capture NTLMv2 | Sim 4 (LLMNR Poisoning) |
+| Mot de passe faible sur ADMINSTRATOR (TempPass123!) | Démontrer la faisabilité du cassage offline après capture NTLMv2 | Sim 4 (LLMNR Poisoning) |
 | GPO désactivant Microsoft Defender | Permettre l'exécution de ransomware sans détection AV | Sim 3 (WannaCry) |
 | Partage hackme accessible à tous | Simuler un point d'exfiltration ou de stockage de payloads | Sim 2 (pivot) |
 | Comptes avec Password never expires | Faciliter le Kerberoasting et la persistance | Sim 4 (AD Attack) |
