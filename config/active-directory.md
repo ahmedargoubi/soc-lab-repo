@@ -21,28 +21,28 @@ Configuration du contrôleur de domaine et des objets Active Directory pour le l
 
 Le rôle **Active Directory Domain Services** a été installé et configuré via l'assistant AD DS Configuration Wizard. La promotion s'est terminée avec succès (`This server was successfully configured as a domain controller`), avec un redémarrage automatique du serveur.
 
-![Add Roles and Features - Installation Type](AD_screens/cap2.png)
+![Add Roles and Features - Installation Type](AD_screens/cap2.png)<br>
 *Sélection du type d'installation : "Role-based or feature-based installation".*
 
-![Add Roles and Features - Server Roles](AD_screens/cap13.png)
+![Add Roles and Features - Server Roles](AD_screens/cap13.png)<br>
 *Sélection du rôle "Active Directory Domain Services".*
 
-![AD DS Configuration - Deployment Configuration](AD_screens/cap40.png)
+![AD DS Configuration - Deployment Configuration](AD_screens/cap40.png)<br>
 *Déploiement : "Add a new forest" avec le domaine `PROJET.local`.*
 
-![AD DS Configuration - Domain Controller Options](AD_screens/cap41.png)
+![AD DS Configuration - Domain Controller Options](AD_screens/cap41.png)<br>
 *Options du contrôleur de domaine : DNS Server, Global Catalog, DSRM password.*
 
-![AD DS Configuration - Additional Options](AD_screens/cap42.png)
+![AD DS Configuration - Additional Options](AD_screens/cap42.png)<br>
 *NetBIOS domain name : `PROJET`.*
 
-![AD DS Configuration - Paths](AD_screens/cap3.png)
+![AD DS Configuration - Paths](AD_screens/cap3.png)<br>
 *Chemins par défaut pour la base de données NTDS, les logs et SYSVOL.*
 
-![AD DS Configuration - Confirmation](AD_screens/cap35.png)
+![AD DS Configuration - Confirmation](AD_screens/cap35.png)<br>
 *Confirmation des rôles et fonctionnalités à installer.*
 
-![AD DS Configuration - Results](AD_screens/cap38.png)
+![AD DS Configuration - Results](AD_screens/cap38.png)<br>
 *Installation réussie avec message "Configuration required. Installation succeeded".*
 
 **Avertissement noté pendant l'installation :** Windows Server 2022 applique par défaut le paramètre de sécurité *"Allow cryptography algorithms compatible with Windows NT 4.0"*, qui désactive les algorithmes de chiffrement faibles lors de l'établissement des canaux sécurisés — comportement par défaut, aucune action requise.
