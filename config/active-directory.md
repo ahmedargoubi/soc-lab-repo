@@ -11,7 +11,7 @@ Configuration du contrôleur de domaine et des objets Active Directory pour le l
 | Hostname | `TEKUP-DC` |
 | OS | Windows Server 2022 |
 | Domaine | `PROJET.local` |
-| IPs observées | `192.168.163.153`, `192.168.7.139` |
+| IP |`192.168.7.139` |
 
 ### 1.1 – Promotion en Domain Controller
 
