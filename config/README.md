@@ -8,6 +8,6 @@ Ce dossier documente **l'installation et la configuration de base** de chaque ou
 | Wazuh | SIEM | [`wazuh.md`](wazuh.md) |
 | Velociraptor | DFIR | [`velociraptor.md`](velociraptor.md) |
 | MISP | Threat Intelligence | [`misp.md`](misp.md) |
-| Suricata | NIDS | [`suricata.md`](suricata.md) |
+| AD | NIDS | [`suricata.md`](active-directory.md) |
 
 > 🚧 Tous les guides sont actuellement des placeholders — voir chaque fichier pour la liste précise des captures/infos nécessaires.
