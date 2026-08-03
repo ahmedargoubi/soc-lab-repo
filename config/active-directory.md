@@ -58,7 +58,7 @@ Le serveur a été renommé `TEKUP-DC` avant ou pendant la promotion, comme visi
 
 Le rôle DNS Server a été installé conjointement à la promotion AD DS. La zone `TEKUP-DC.PROJET.local` est créée automatiquement et visible dans la console **DNS Manager**.
 
-![DNS Manager - TEKUP-DC.PROJET.local](AD_screens/cap5.png)
+![DNS Manager - TEKUP-DC.PROJET.local](AD_screens/cap5.png)<br>
 *Zone DNS `TEKUP-DC.PROJET.local` visible dans DNS Manager.*
 
 **Tests de résolution (capture `cap37`) :**
@@ -74,7 +74,7 @@ Name:    PROJET.local
 Address: 192.168.7.139
 ```
 
-![Ping et nslookup vers TEKUP-DC](AD_screens/cap37.png)
+![Ping et nslookup vers TEKUP-DC](AD_screens/cap37.png)<br>
 *Ping et résolution DNS vers le contrôleur de domaine.*
 
 ---
@@ -91,10 +91,10 @@ Address: 192.168.7.139
 
 Les deux machines apparaissent dans **Active Directory Users and Computers → PROJET.local → Computers** une fois la jonction réussie.
 
-![ADUC - Postes AHMED et HAROUN](AD_screens/cap9.png)
+![ADUC - Postes AHMED et HAROUN](AD_screens/cap9.png)<br>
 *Postes AHMED et HAROUN visibles dans le conteneur Computers.*
 
-![ADUC - Conteneur Computers](AD_screens/cap5.png)
+![ADUC - Conteneur Computers](AD_screens/cap5.png)<br>
 *Vue d'ensemble du conteneur Computers avec les postes joints.*
 
 ---
@@ -138,7 +138,7 @@ Plusieurs comptes ont été créés par copie d'utilisateurs existants (`Copy Ob
 | Group Policy Creator Owners |
 | Schema Admins |
 
-![Groupes de Haroun Rashid](config_screens/cap55.png)
+![Groupes de Haroun Rashid](config_screens/cap55.png)<br>
 *Appartenance de Haroun Rashid aux groupes Domain Admins, Enterprise Admins, Schema Admins, etc.*
 
 ⚠️ Ce niveau de privilège sur un compte utilisateur standard est **la faille exploitée dans la Simulation 3 (WannaCry)** — `haroun` étant Domain Admin, le ransomware exécuté sous son contexte a pu désactiver Windows Defender sans invite UAC. Voir `reports/phase-a-baseline/simulation-3-wannacry-ransomware.md`, section 3.5 et 5.3.
@@ -159,7 +159,7 @@ Un SPN a été explicitement ajouté pour le compte `SQLservice` :
 setspn -a TEKUP-DC/SQLservice.PROJET.local:60111 PROJET\SQLservice
 ```
 
-![Ajout du SPN SQLservice](AD_screens/cap23.png)
+![Ajout du SPN SQLservice](AD_screens/cap23.png)<br>
 *Ajout du SPN `TEKUP-DC/SQLservice.PROJET.local:60111` pour le compte `PROJET\SQLservice`.*
 
 Cela rend le compte `SQLservice` Kerberoastable (car il possède un SPN). Le mot de passe du compte ayant été défini avec Password never expires, il constitue une cible idéale pour une attaque Kerberoasting — exploitée dans la Simulation 4 (`reports/phase-a-baseline/simulation-4-active-directory.md`).
@@ -170,7 +170,7 @@ La liste complète des SPN du domaine est visible avec la commande :
 setspn -T PROJET.local -Q */*
 ```
 
-![Liste des SPN du domaine](AD_screens/cap25.png)
+![Liste des SPN du domaine](AD_screens/cap25.png)<br>
 *Liste des SPN du domaine PROJET.local, incluant celui de SQLservice.*
 
 Un autre SPN est visible dans les captures (`HYDRA-DC/SQLService.MARVEL.local:60111`) mais il s'agit d'un test antérieur (domaine MARVEL.local) ; il n'est pas actif dans PROJET.local.
@@ -187,10 +187,10 @@ Plusieurs GPO ont été créées ou modifiées pour affaiblir la sécurité du d
 
 La GPO est visible dans la console Group Policy Management et liée au domaine PROJET.local.
 
-![Group Policy Management](AD_screens/cap26.png)
+![Group Policy Management](AD_screens/cap26.png)<br>
 *Console Group Policy Management avec la GPO créée.*
 
-![Paramètre GPO - Defender désactivé](AD_screens/cap27.png)
+![Paramètre GPO - Defender désactivé](AD_screens/cap27.png)<br>
 *Paramètre de la GPO : "Turn off Microsoft Defender Antivirus" activé.*
 
 ⚠️ Cette GPO a permis au ransomware WannaCry (Simulation 3) de s'exécuter sans être bloqué par Windows Defender, car le compte haroun (Domain Admin) a pu désactiver la protection.
