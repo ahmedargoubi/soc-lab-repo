@@ -138,7 +138,7 @@ Plusieurs comptes ont été créés par copie d'utilisateurs existants (`Copy Ob
 | Group Policy Creator Owners |
 | Schema Admins |
 
-![Groupes de Haroun Rashid](AD_screens/cap16-07-201735.png)
+![Groupes de Haroun Rashid](config_screens/cap55.png)
 *Appartenance de Haroun Rashid aux groupes Domain Admins, Enterprise Admins, Schema Admins, etc.*
 
 ⚠️ Ce niveau de privilège sur un compte utilisateur standard est **la faille exploitée dans la Simulation 3 (WannaCry)** — `haroun` étant Domain Admin, le ransomware exécuté sous son contexte a pu désactiver Windows Defender sans invite UAC. Voir `reports/phase-a-baseline/simulation-3-wannacry-ransomware.md`, section 3.5 et 5.3.
@@ -195,60 +195,9 @@ La GPO est visible dans la console Group Policy Management et liée au domaine P
 
 ⚠️ Cette GPO a permis au ransomware WannaCry (Simulation 3) de s'exécuter sans être bloqué par Windows Defender, car le compte haroun (Domain Admin) a pu désactiver la protection.
 
----
 
-## 6. Partages réseau (SMB)
 
-Plusieurs partages ont été créés sur le contrôleur de domaine :
-
-| Nom du partage | Chemin local | Type | Objectif |
-|---|---|---|---|
-| NETLOGON | `C:\Windows\SYSVOL\sysvol\PROJET.local\scripts` | SMB | Partage système AD (scripts de connexion) |
-| SYSVOL | `C:\Windows\SYSVOL\sysvol` | SMB | Répertoire système AD (stratégies) |
-| hackme | `C:\Shares\hackme` | SMB | Partage volontairement exposé (trop permissif) pour simuler une exfiltration ou un pivot |
-| share (sur AHMED) | `C:\share` | SMB | Partage créé sur le poste client AHMED |
-
-![Partages NETLOGON, SYSVOL, hackme](AD_screens/cap21.png)<br>
-*Partages NETLOGON, SYSVOL et hackme sur le contrôleur de domaine.*
-
-![Profil SMB Share - Quick](AD_screens/cap18.png)<br>
-*Sélection du profil "SMB Share - Quick" pour le partage hackme.*
-
-![Chemin du partage hackme](AD_screens/cap19.png)<br>
-*Chemin du partage : C:\Shares\hackme.*
-
-![Nom du partage hackme](AD_screens/cap20.png)<br>
-*Nom du partage : hackme.*
-
-![Partage share sur AHMED](AD_screens/cap32.png)<br>
-*Partage share créé sur le poste client AHMED.*
-
-![Propriétés du partage share](AD_screens/cap29.png)<br>
-*Propriétés du partage share sur AHMED.*
-
-![Ajout d'Ahmed comme propriétaire](AD_screens/cap30.png)<br>
-*Ajout de l'utilisateur Ahmed comme propriétaire du partage.*
-
-![Activation du partage réseau](AD_screens/cap31.png)<br>
-*Activation du partage réseau et découverte réseau.*
-
-Le partage hackme a été créé avec le profil "SMB Share - Quick" et est accessible depuis les postes du domaine. Il est utilisé dans les simulations de pivot/latéral (notamment Simulation 2) pour démontrer les risques de partages mal sécurisés.
-
----
-
-## 7. Configuration Dnsmasq sur OPNsense
-
-Le service Dnsmasq DNS & DHCP sur OPNsense a été configuré pour gérer les zones réseau et les interfaces.
-
-![Configuration générale Dnsmasq](AD_screens/cap28.png)
-*Configuration générale de Dnsmasq avec les interfaces sélectionnées.*
-
-![Interfaces activées Dnsmasq](AD_screens/cap34.png)
-*Interfaces activées : DMZ, legacy, securitylan, serverlan, userlan, WAN.*
-
----
-
-## 8. Récapitulatif des faiblesses intentionnelles introduites
+## 6. Récapitulatif des faiblesses intentionnelles introduites
 
 | Faiblesse | Objectif pédagogique | Simulation liée |
 |---|---|---|
