@@ -65,12 +65,14 @@ Le compte `root` étant membre du groupe `admins`, il est désormais soumis à l
 2. Navigation privée (évite tout cookie de session résiduel).
 3. Connexion avec mot de passe + OTP collés.
 
+![Écran Administration final](screenshots/opnsense-mfa/cap.png)
+
 > 🚧 **Statut : configuration terminée, test de connexion final à reconfirmer** — la configuration ci-dessus a été validée écran par écran, mais la confirmation explicite d'un login réussi avec OTP (et d'un rejet sans OTP) reste à documenter avec une capture finale.
 
 ---
 
 ## 4. Choix d'architecture — pourquoi pas FreeRADIUS/privacyIDEA ici
 
-Le mécanisme RADIUS via privacyIDEA (documenté dans `config/privacyidea-radius.md` si présent, ou dans l'historique du projet) a été mis en place pour SSH, mais s'est avéré instable pour un déploiement rapide (serveur de dev Flask non persistant, cascades de pannes). Pour OPNsense spécifiquement, le TOTP natif intégré est apparu comme une solution **plus rapide et tout aussi valide** pour ce point précis, sans dépendance à un service externe.
+
 
 ⚠️ **Limite à documenter en GRC :** ce choix crée **deux mécanismes MFA distincts** dans le lab (TOTP natif OPNsense, PAM Google Authenticator sur Security-Core — voir `config/security-core-ssh-mfa.md`), plutôt qu'une solution centralisée unique. Compromis assumé par contrainte de temps ; recommandation pour itération future : centraliser via privacyIDEA une fois sa stabilité en production confirmée.
