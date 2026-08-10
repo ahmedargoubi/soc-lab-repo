@@ -21,6 +21,8 @@ Wazuh Manager et MISP tournent sur la même VM (**Security-Core**), MISP étant 
 
 Générée depuis la WebUI MISP (profil utilisateur → Auth Keys → Add authentication key), permissions par défaut (lecture).
 
+![Permissions du script](screenshots/wazuh-misp/cap.png)
+
 ### 2.2 – Script d'intégration
 
 ```bash
