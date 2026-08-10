@@ -112,6 +112,4 @@ Welcome to Ubuntu 26.04 LTS (GNU/Linux 7.0.0-27-generic x86_64)
 | Pas de révocation centralisée | Révoquer l'accès d'un utilisateur nécessite d'intervenir sur chaque machine individuellement |
 | Approche abandonnée : privacyIDEA + FreeRADIUS pour SSH | Techniquement fonctionnelle (validée via `radtest`) mais instable en usage réel (serveur de développement Flask non persistant, cascades de pannes lors de la fermeture de terminaux) ; stabilisée ensuite en service systemd (gunicorn) mais le choix a finalement été fait de basculer sur Google Authenticator PAM par contrainte de temps |
 
-**Recommandation pour itération future (Phase C ou au-delà) :** migrer vers une solution centralisée (privacyIDEA stabilisé, ou équivalent) si le nombre de machines à protéger augmente, pour bénéficier d'un audit unifié et d'une révocation centralisée — cohérent avec le même compromis documenté pour OPNsense (`config/opnsense-mfa.md`).
 
-**Ce mécanisme ne couvre que SSH sur Security-Core.** OPNsense utilise un mécanisme séparé (TOTP natif, voir `config/opnsense-mfa.md`). Le login Windows/AD (`ahmed`, `haroun` sur leurs postes) n'est pas couvert par le MFA à ce stade — nécessiterait un agent dédié (ex. privacyIDEA Credential Provider), non implémenté par contrainte de temps.
