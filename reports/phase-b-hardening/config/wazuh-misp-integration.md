@@ -142,10 +142,3 @@ Pour valider ce dernier cas, il faut :
 
 ---
 
-## 4. Limites connues / améliorations futures
-
-| Limite | Détail |
-|---|---|
-| Vérification TLS désactivée (`verify=False`) | Acceptable en lab (certificat auto-signé), à revoir si migration vers un certificat CA valide |
-| Corrélation hashs de fichiers uniquement | Ne couvre pas les IOCs réseau (IPs, domaines) — nécessiterait un second script sur le même principe interrogeant les attributs `ip-dst`/`domain` |
-| `debug: true` actif en permanence | À repasser à `false` une fois la Phase B validée, pour réduire le volume de logs |
