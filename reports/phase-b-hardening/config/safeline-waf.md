@@ -48,6 +48,7 @@ sudo bash -c "$(curl -fsSLk https://waf.chaitin.com/release/latest/setup.sh)" --
 
 Accès confirmé : `https://192.168.9.133:9443/`.
 
+![Sortie d'installation avec identifiants](screenshots/safeline-waf/cap.png)
 ---
 
 ## 3. Configuration de l'application web (DVWA)
