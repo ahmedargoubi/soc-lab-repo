@@ -98,7 +98,7 @@ Si le client contacte directement `192.168.11.177`, il **contourne entièrement 
 | `http://192.168.9.133/DVWA/` | ✅ OUI | Le trafic passe par le WAF. Les attaques XSS sont détectées et bloquées (voir logs section 5). |
 | `http://192.168.11.177/DVWA/` | ❌ NON | Accès direct, contourne totalement le WAF. Aucune inspection, aucun log, aucun blocage. |
 
-![Accès direct à DVWA sans protection](screenshots/safeline-waf/05-dvwa-direct-access-unprotected.png)
+![Accès direct à DVWA sans protection](screenshots/safeline-waf/cappp.png)
 *Accès direct via `192.168.11.177` — la page DVWA répond normalement, sans passer par SafeLine.*
 
 **Constat clé :** le WAF ne protège que lorsque le trafic transite par son IP (`192.168.9.133`). L'accès direct à l'IP de la DMZ contourne totalement la protection — c'est la limite structurelle que la section 6 vise à corriger.
