@@ -119,19 +119,17 @@ Soumis via `http://192.168.9.133/DVWA/vulnerabilities/xss_r/?name=<script>alert(
 ![Détail de l'attaque bloquée](screenshots/safeline-waf/07-xss-attack-detail-blocked.png)
 *Requête marquée "Deny" — module XSS, payload détecté dans l'URL.*
 
+![Détail de l'application DVWA dans SafeLine](screenshots/safeline-waf/cap3.png)
+
+
+
+### 5.2 – Vérefication
+
 ![Détail de l'application DVWA dans SafeLine](screenshots/safeline-waf/02-application-dvwa-detail.png)
 *Attacks → Logs : `Blocked`, type `XSS`, IP source `192.168.9.150` (poste analyste), horodatage confirmé.*
 
 **Vérification dans SafeLine :** menu **Attacks → Logs**, filtrable par IP/domaine/type d'attaque.
 
-### 5.2 – Test SQL Injection (à réaliser — pas encore exécuté)
-
-Payloads recommandés, du plus simple au plus avancé, pour compléter la validation :
-```
-' OR '1'='1
-' UNION SELECT user, password FROM users-- -
-```
-À soumettre sur `http://192.168.9.133/DVWA/vulnerabilities/sqli/`, puis vérifier l'apparition d'une entrée `Blocked` / type `SQL Inj` dans **Attacks → Logs**, au même titre que le test XSS ci-dessus.
 
 ### 5.3 – Configuration des modules de détection
 
@@ -142,16 +140,9 @@ Les modules actifs sont visibles dans **Applications → DVWA → Attacks → Se
 
 `Balance Mode` est un compromis raisonnable pour un lab (détection efficace, faux positifs limités). `Strict Mode` serait plus agressif mais risquerait de bloquer du trafic légitime — à envisager uniquement si un test de charge applicative est prévu en parallèle.
 
-### 5.4 – Dépannage : erreur 502 Bad Gateway
 
-![Erreur 502 rencontrée](screenshots/safeline-waf/06-502-bad-gateway.png)
 
-Cette erreur signifie que le WAF **reçoit bien la requête** mais **ne parvient pas à joindre l'upstream** (DVWA). Causes possibles à vérifier dans l'ordre :
-1. La VM DVWA est-elle démarrée et le service Apache actif ?
-2. La règle OPNsense Security_LAN → DMZ (port 80) est-elle toujours active ? (cf. `network/opnsense-firewall-rules.md`)
-3. L'adresse upstream configurée dans SafeLine correspond-elle exactement à l'IP actuelle de DVWA ? (rappel : ce projet a une historique d'instabilité d'IP entre DMZ et Legacy, voir `docs/troubleshooting-journal.md`)
-
-### 5.5 – Tableau de bord
+### 5.4 – Tableau de bord
 
 ![Statistiques SafeLine](screenshots/safeline-waf/03-statistics-dashboard.png)
 *Vue d'ensemble : requêtes totales, taux de blocage, erreurs 4xx/5xx — utile pour un suivi dans le temps une fois le WAF en production sur plusieurs applications.*
