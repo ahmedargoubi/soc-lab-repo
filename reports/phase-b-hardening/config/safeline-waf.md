@@ -64,7 +64,8 @@ Dans SafeLine : **Applications → Add Application**.
 | Access method | `Reverse Proxy` | Le WAF s'intercale entre le client et le serveur réel |
 | **Upstream** | `http://192.168.11.177:80` | **L'adresse réelle du serveur DVWA** — voir point critique ci-dessous |
 
-![Détail de l'application DVWA dans SafeLine](screenshots/safeline-waf/02-application-dvwa-detail.png)
+![Log des attaques — entrée bloquée](screenshots/safeline-waf/08-attacks-log-blocked-xss.png)
+
 
 ### ⚠️ Point critique — pourquoi l'upstream doit être l'IP réelle du serveur, pas celle du WAF
 
@@ -114,7 +115,7 @@ Soumis via `http://192.168.9.133/DVWA/vulnerabilities/xss_r/?name=<script>alert(
 ![Détail de l'attaque bloquée](screenshots/safeline-waf/07-xss-attack-detail-blocked.png)
 *Requête marquée "Deny" — module XSS, payload détecté dans l'URL.*
 
-![Log des attaques — entrée bloquée](screenshots/safeline-waf/08-attacks-log-blocked-xss.png)
+![Détail de l'application DVWA dans SafeLine](screenshots/safeline-waf/02-application-dvwa-detail.png)
 *Attacks → Logs : `Blocked`, type `XSS`, IP source `192.168.9.150` (poste analyste), horodatage confirmé.*
 
 **Vérification dans SafeLine :** menu **Attacks → Logs**, filtrable par IP/domaine/type d'attaque.
