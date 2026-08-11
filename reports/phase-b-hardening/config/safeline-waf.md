@@ -145,7 +145,7 @@ Les modules actifs sont visibles dans **Applications → DVWA → Attacks → Se
 ### 5.4 – Tableau de bord
 
 ![Statistiques SafeLine](screenshots/safeline-waf/05-dvwa-direct-access-unprotected.png)
-)
+
 *Vue d'ensemble : requêtes totales, taux de blocage, erreurs 4xx/5xx — utile pour un suivi dans le temps une fois le WAF en production sur plusieurs applications.*
 
 ---
@@ -203,6 +203,8 @@ Sans cette seconde règle, la redirection DNAT s'applique seulement à certains 
 ## 7. Lien avec la Phase A
 
 Ce déploiement répond directement à la recommandation formulée dans `reports/phase-a-baseline/simulation-1-dvwa.md` (section 6.4, "GRC — Privilège & Segmentation") : *"Deploy ModSecurity WAF on the DMZ web server to block SQLi and command injection attempts"*. SafeLine WAF remplit ce rôle ici, avec une couverture plus large (XSS, injections de code Java/PHP/ASP, SSTI, upload de fichiers) que la recommandation initiale ne mentionnait.
+
+![Statistiques SafeLine](screenshots/safeline-waf/1_vBlRDb7riKQ0BubLtq1d_A.png)
 
 ---
 
