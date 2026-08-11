@@ -144,7 +144,8 @@ Les modules actifs sont visibles dans **Applications → DVWA → Attacks → Se
 
 ### 5.4 – Tableau de bord
 
-![Statistiques SafeLine](screenshots/safeline-waf/03-statistics-dashboard.png)
+![Statistiques SafeLine](screenshots/safeline-waf/05-dvwa-direct-access-unprotected.png)
+)
 *Vue d'ensemble : requêtes totales, taux de blocage, erreurs 4xx/5xx — utile pour un suivi dans le temps une fois le WAF en production sur plusieurs applications.*
 
 ---
