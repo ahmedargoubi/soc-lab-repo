@@ -85,6 +85,10 @@ Un WAF en reverse proxy ne fonctionne que si **le client se connecte au WAF, pas
 Client → SafeLine WAF (192.168.9.133:80) → inspection → DVWA (192.168.11.177:80)
 ```
 
+
+![Accès direct à DVWA sans protection](screenshots/safeline-waf/safeline_waf_architecture_corrected.png)
+
+
 Si le client contacte directement `192.168.11.177`, il **contourne entièrement le WAF** — la requête arrive directement sur DVWA sans jamais passer par l'inspection.
 
 ### 4.2 – Confirmation empirique dans ce lab
