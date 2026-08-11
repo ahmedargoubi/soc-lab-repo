@@ -206,14 +206,4 @@ Ce déploiement répond directement à la recommandation formulée dans `reports
 
 ![Statistiques SafeLine](screenshots/safeline-waf/1_vBlRDb7riKQ0BubLtq1d_A.png)
 
----
 
-## 8. Limites connues (à documenter en GRC)
-
-| Limite | Détail |
-|---|---|
-| Contournement par IP directe (avant Option 2) | Documenté section 4.2 — corrigé par la redirection DNAT + blocage (section 6, Option 2) |
-| Mot de passe admin initial en clair dans les logs d'installation | À changer immédiatement après la première connexion |
-| Test SQL Injection non encore réalisé | Seul le test XSS a été validé à ce stade (section 5.1) ; SQLi reste à confirmer (section 5.2) |
-| Mode de détection "Balance" (pas "Strict") | Compromis détection/faux-positifs par défaut — à réévaluer si le lab pousse vers un mode plus agressif |
-| Une seule application protégée (DVWA) | Le WAF n'est pas encore étendu aux autres services web du lab, s'il y en a d'autres à exposer |
