@@ -67,7 +67,7 @@ Fichier standard de test antivirus (inoffensif, reconnu par la quasi-totalité d
 - Hash SHA256 : `275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f`
 
 
-![Bloc d'intégration VirusTotal complet](screenshots/virustotal-integration/02-ossec-conf-integration-block-full.png)
+
 
 ### 3.2 – Vérification indépendante sur VirusTotal
 
@@ -82,7 +82,7 @@ Le fichier a été placé dans un dossier surveillé par syscheck (`realtime="ye
 
 ## 4. Résultats — alerte enrichie confirmée
 
-![Threat Hunting — chronologie des alertes sur HAROUNRASHID01](screenshots/virustotal-integration/04-wazuh-threat-hunting-virustotal-alert.png)
+![Bloc d'intégration VirusTotal complet](screenshots/virustotal-integration/02-ossec-conf-integration-block-full.png)
 
 | Timestamp | Rule ID | Niveau | Description |
 |---|---|---|---|
