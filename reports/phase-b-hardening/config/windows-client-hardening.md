@@ -50,7 +50,7 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 | Account lockout threshold | 5 invalid logon attempts |
 | Reset account lockout counter after | 30 minutes |
 
-![Politique de verrouillage de compte](screenshots/windows-client-hardening/01-account-lockout-policy.png)
+![Politique de mot de passe](screenshots/windows-client-hardening/02-password-policy.png)
 
 **Lien direct avec la Phase A :** un mot de passe de 14 caractères minimum, avec complexité imposée, rend le cassage offline d'un hash NTLMv2 capturé (comme dans la Simulation 4) considérablement plus coûteux qu'un mot de passe court comme `TempPass123!`. Le verrouillage après 5 tentatives limite également le brute-force en ligne.
 
