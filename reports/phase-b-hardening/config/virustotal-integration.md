@@ -34,7 +34,7 @@ Cette intégration complète celle déjà en place avec MISP (`config/wazuh-misp
 </integration>
 ```
 
-![Bloc d'intégration VirusTotal complet](screenshots/virustotal-integration/02-ossec-conf-integration-block-full.png)
+
 ![Bloc d'intégration — vue rapprochée de la clé API](screenshots/virustotal-integration/01-ossec-conf-integration-block-partial.png)
 
 | Paramètre | Rôle |
@@ -65,6 +65,9 @@ L'alerte enrichie observée (section 4) utilise la **Rule 87105**, une règle **
 Fichier standard de test antivirus (inoffensif, reconnu par la quasi-totalité des moteurs) :
 - Nom : `malicious-file.exe` (renommage volontaire du fichier EICAR pour le test, dans `c:\users\haroun\downloads\`)
 - Hash SHA256 : `275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f`
+
+
+![Bloc d'intégration VirusTotal complet](screenshots/virustotal-integration/02-ossec-conf-integration-block-full.png)
 
 ### 3.2 – Vérification indépendante sur VirusTotal
 
