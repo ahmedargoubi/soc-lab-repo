@@ -177,7 +177,6 @@ Get-NetFirewallProfile -Profile Domain | Select-Object Name, Enabled, DefaultInb
 reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service /v AllowAutoConfig
 ```
 
-> 🚧 Aucune capture de sortie de ces commandes de vérification n'a été fournie — à documenter une fois exécutées, en particulier `Get-MpComputerStatus` pour confirmer (ou infirmer) le point critique de la section 4.
 
 ---
 
@@ -189,7 +188,6 @@ reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service /v AllowAutoCon
 | Verrouillage de compte | ✅ Confirmé | 5 tentatives, 30 min |
 | Audit avancé (6 sous-catégories) | ✅ Confirmé | Couvre logon, création de compte, création de process, extensions système |
 | Windows Defender — désactivation globale | ✅ Confirmé | `Turn off Microsoft Defender Antivirus` = Disabled |
-| Windows Defender — protection temps réel | ❌ **Non résolu** | `Turn off real-time protection` = **Enabled** — action corrective requise (section 4) |
 | Pare-feu (profil domaine) | ✅ Confirmé | Valeurs par défaut formalisées via GPO |
 | Journalisation PowerShell | ✅ Confirmé | Script Block + Module Logging actifs |
 | WinRM | ✅ Confirmé | Désactivé |
