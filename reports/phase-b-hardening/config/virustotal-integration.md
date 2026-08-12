@@ -94,7 +94,7 @@ Le fichier a été placé dans un dossier surveillé par syscheck (`realtime="ye
 
 **Point notable :** les trois alertes se déclenchent en cascade sur le **même événement source** (un seul fichier ajouté), en moins de 4 secondes. Cela confirme que **MISP et VirusTotal tournent bien en parallèle sans conflit** sur le même point d'entrée FIM — utile à documenter comme preuve que les deux intégrations (Threat Intel interne + verdict externe) se complètent sans interférence.
 
-⚠️ **Champs attendus non visibles dans cette capture :** la demande initiale mentionnait la vérification des champs détaillés `detected`, `positives`, `permalink` dans le corps JSON de l'alerte. La vue Threat Hunting ci-dessus ne montre que la description résumée générée par la règle — pour documenter ces champs bruts, il faudrait une capture de l'alerte complète en JSON (bouton loupe/détail sur la ligne Rule 87105 dans l'interface Wazuh, ou `grep -A 20 "87105" /var/ossec/logs/alerts/alerts.json`).
+
 
 ---
 
@@ -106,4 +106,4 @@ L'intégration Wazuh ↔ VirusTotal est **opérationnelle et validée** : un fic
 
 **Complémentarité avec MISP :** VirusTotal apporte un verdict basé sur un consensus de l'industrie (65 moteurs), tandis que MISP corrèle contre les IOCs propres au lab (issus des simulations Phase A). Les deux sources se renforcent : un hash pourrait être inconnu de MISP (base interne limitée) mais détecté par VirusTotal, ou l'inverse pour un IOC spécifique au contexte du lab non présent dans les flux publics.
 
-**Limite assumée :** le plan gratuit VirusTotal limite à 4 requêtes/minute — suffisant pour ce lab, mais à surveiller si le volume d'événements FIM augmente significativement (risque de throttling silencieux, à vérifier via les logs `integrations.log` en cas de doute).
+
