@@ -49,7 +49,7 @@ This the full list of Hunts that i created  during in this phase:
 
 Velociraptor is an open-source endpoint monitoring, forensic, and response platform built on top of Google's **osquery**-style VQL (Velociraptor Query Language) engine. Unlike traditional EDR agents that only forward pre-defined telemetry, Velociraptor allows an analyst to run arbitrary, parameterized queries — called **artifacts** — against one endpoint or an entire fleet on demand.
 
-![Velociraptor Hunt Manager — list of all Hunts created in Phase B](screenshots/velociraptor-hero-copy (1).jpg)
+![Velociraptor Hunt Manager — list of all Hunts created in Phase B](screenshots/velociraptor.jpg)
 
 Two capabilities make it central to this lab's DFIR strategy:
 
