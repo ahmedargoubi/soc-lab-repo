@@ -222,8 +222,6 @@ The `Linux.Sys.Services` artifact enumerates all `systemd` services on the DMZ-W
 ![Linux.Sys.BashShell — ls result](screenshots/cap21.png)
 
 
-**Value:** A baseline service and account inventory makes it possible to spot an attacker-installed persistence mechanism disguised as a system service, or a new/unexpected local account (e.g., a UID 0 account that isn't `root`) — both classic persistence indicators. Running these Hunts fleet-wide, rather than host-by-host, makes it trivial to diff service and account lists across all Linux endpoints in one pass.
-
 ### 6.4 SSH Login Monitoring — `Linux.Syslog.SSHLogin`
 
 The `Linux.Syslog.SSHLogin` artifact parses `/var/log/{auth.log,secure}*` using a dedicated Grok expression that extracts, per line: `Timestamp`, `IP` (source), `Result` (accepted/failed/invalid user), `Method` (e.g. password, publickey), and `AttemptedUser` (VQL source and Grok pattern shown in Figure 13).
