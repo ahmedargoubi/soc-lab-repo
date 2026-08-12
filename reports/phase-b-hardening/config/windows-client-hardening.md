@@ -71,7 +71,8 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 ![Audit Credential Validation](screenshots/windows-client-hardening/03-audit-credential-validation.png)
 ![Audit User Account Management](screenshots/windows-client-hardening/04-audit-user-account-management.png)
-![Audit Process Creation](screenshots/windows-client-hardening/05-audit-process-creation.png)
+![Turn off Microsoft Defender Antivirus = Disabled](screenshots/windows-client-hardening/11-defender-turn-off-antivirus-disabled.png)
+
 ![Audit Special Logon](screenshots/windows-client-hardening/06-audit-special-logon.png)
 ![Audit Security State Change](screenshots/windows-client-hardening/07-audit-security-state-change.png)
 ![Audit Security System Extension](screenshots/windows-client-hardening/08-audit-security-system-extension.png)
@@ -84,12 +85,14 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 **GPO :** Computer Configuration → Policies → Administrative Templates → Windows Components → Microsoft Defender Antivirus
 
+![Audit Process Creation](screenshots/windows-client-hardening/05-audit-process-creation.png)
+
 | Politique | Valeur configurée | Effet |
 |---|---|---|
 | Turn off Microsoft Defender Antivirus | **Disabled** | Defender reste actif — corrige directement la GPO `Disable Windows Defender` créée en Phase A |
 | Turn off real-time protection | **Enabled** ⚠️ | **La protection en temps réel reste désactivée** — voir alerte ci-dessous |
 
-![Turn off Microsoft Defender Antivirus = Disabled](screenshots/windows-client-hardening/11-defender-turn-off-antivirus-disabled.png)
+
 ![Turn off real-time protection = Enabled](screenshots/windows-client-hardening/10-defender-turn-off-realtime-protection-ENABLED.png)
 
 ### ⚠️ Point critique à corriger avant de considérer ce chantier terminé
