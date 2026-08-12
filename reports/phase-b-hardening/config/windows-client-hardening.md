@@ -73,8 +73,10 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 ![Turn off Microsoft Defender Antivirus = Disabled](screenshots/windows-client-hardening/11-defender-turn-off-antivirus-disabled.png)
 ![Turn off real-time protection = Enabled](screenshots/windows-client-hardening/10-defender-turn-off-realtime-protection-ENABLED.png)
 ![Audit Special Logon](screenshots/windows-client-hardening/06-audit-special-logon.png)
-
+![Script Block Logging activé](screenshots/windows-client-hardening/13-powershell-scriptblock-logging.png)
+![Module Logging activé avec modules ciblés](screenshots/windows-client-hardening/14-powershell-module-logging.png)
 ![Audit Security System Extension](screenshots/windows-client-hardening/08-audit-security-system-extension.png)
+![WinRM désactivé](screenshots/windows-client-hardening/12-winrm-disabled.png)
 
 **Lien avec la Phase A :** `Audit Process Creation` est la correction directe recommandée dans le rapport de la Simulation 3 (section 6.1, "Sysmon Deployment") — combinée à un déploiement Sysmon (traité séparément), cette politique fournit la visibilité sur l'exécution de processus qui manquait pour détecter `tasksche.exe`/`mssecsvc.exe` par une règle dédiée.
 
@@ -123,8 +125,7 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 | Turn on PowerShell Script Block Logging | **Enabled** |
 | Turn on Module Logging | **Enabled** — modules : `Microsoft.PowerShell.*`, `Microsoft.WSMan.Management` |
 ![Audit Security State Change](screenshots/windows-client-hardening/07-audit-security-state-change.png)
-![Script Block Logging activé](screenshots/windows-client-hardening/13-powershell-scriptblock-logging.png)
-![Module Logging activé avec modules ciblés](screenshots/windows-client-hardening/14-powershell-module-logging.png)
+
 
 **Lien avec la Phase A :** la Simulation 4 (Active Directory) impliquait des outils PowerShell/scripts (`impacket-wmiexec`, énumération BloodHound). Cette journalisation permettrait de capturer le contenu exact des commandes PowerShell exécutées lors d'une attaque similaire en Phase C, renforçant les capacités DFIR (Velociraptor peut ensuite interroger ces logs).
 
@@ -138,7 +139,7 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 |---|---|
 | Allow remote server management through WinRM | **Disabled** |
 
-![WinRM désactivé](screenshots/windows-client-hardening/12-winrm-disabled.png)
+
 
 Réduit la surface d'attaque pour la gestion distante — bien que la Simulation 4 ait utilisé `wmiexec` (DCOM/WMI, distinct de WinRM), cette mesure ferme un vecteur d'administration distante supplémentaire qui n'est pas nécessaire dans ce lab.
 
