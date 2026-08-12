@@ -75,8 +75,8 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 ![Script Block Logging activé](screenshots/windows-client-hardening/13-powershell-scriptblock-logging.png)
 ![Module Logging activé avec modules ciblés](screenshots/windows-client-hardening/14-powershell-module-logging.png)
-![Audit Security System Extension](screenshots/windows-client-hardening/08-audit-security-system-extension.png)
 
+![WinRM désactivé](screenshots/windows-client-hardening/12-winrm-disabled.png)
 
 **Lien avec la Phase A :** `Audit Process Creation` est la correction directe recommandée dans le rapport de la Simulation 3 (section 6.1, "Sysmon Deployment") — combinée à un déploiement Sysmon (traité séparément), cette politique fournit la visibilité sur l'exécution de processus qui manquait pour détecter `tasksche.exe`/`mssecsvc.exe` par une règle dédiée.
 
@@ -141,7 +141,8 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 ![Audit Special Logon](screenshots/windows-client-hardening/06-audit-special-logon.png)
 
-![WinRM désactivé](screenshots/windows-client-hardening/12-winrm-disabled.png)
+
+![Audit Security System Extension](screenshots/windows-client-hardening/08-audit-security-system-extension.png)
 
 Réduit la surface d'attaque pour la gestion distante — bien que la Simulation 4 ait utilisé `wmiexec` (DCOM/WMI, distinct de WinRM), cette mesure ferme un vecteur d'administration distante supplémentaire qui n'est pas nécessaire dans ce lab.
 
