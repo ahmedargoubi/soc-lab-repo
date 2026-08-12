@@ -38,7 +38,7 @@ The objective of this phase was to move from a purely reactive incident-response
 | Set Resource Limits | Applied CPU, IOPS, and execution-time limits to avoid impacting endpoints | ✅ Done |
 | Collected Evidence | Ran Hunts and reviewed results (Bash history, process lists, user lists, SSH logs, live shell output) | ✅ Done |
 
-The full list of Hunts scheduled against the `HAROUN.PROJET.local` org during this phase:
+This the full list of Hunts that i created  during in this phase:
 
 ![Velociraptor Hunt Manager — list of all Hunts created in Phase B](screenshots/cap6.png)
 *Figure 1 — Hunt Manager overview: seven Hunts covering critical services, running processes, file search, local users, system services, SSH login parsing, and Bash history.*
