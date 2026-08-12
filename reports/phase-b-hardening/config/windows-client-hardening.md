@@ -125,8 +125,11 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 |---|---|
 | Turn on PowerShell Script Block Logging | **Enabled** |
 | Turn on Module Logging | **Enabled** — modules : `Microsoft.PowerShell.*`, `Microsoft.WSMan.Management` |
-![Audit Security State Change](screenshots/windows-client-hardening/07-audit-security-state-change.png)
 
+<br>
+
+![Audit Security State Change](screenshots/windows-client-hardening/07-audit-security-state-change.png)
+![Audit Special Logon](screenshots/windows-client-hardening/06-audit-special-logon.png)
 
 **Lien avec la Phase A :** la Simulation 4 (Active Directory) impliquait des outils PowerShell/scripts (`impacket-wmiexec`, énumération BloodHound). Cette journalisation permettrait de capturer le contenu exact des commandes PowerShell exécutées lors d'une attaque similaire en Phase C, renforçant les capacités DFIR (Velociraptor peut ensuite interroger ces logs).
 
@@ -140,7 +143,7 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 |---|---|
 | Allow remote server management through WinRM | **Disabled** |
 
-![Audit Special Logon](screenshots/windows-client-hardening/06-audit-special-logon.png)
+
 
 
 ![Audit Security System Extension](screenshots/windows-client-hardening/08-audit-security-system-extension.png)
