@@ -11,6 +11,9 @@ Enrichissement des alertes Wazuh (FIM/syscheck) avec le renseignement VirusTotal
 
 **Pourquoi cette intégration :** Wazuh détecte qu'un fichier a été ajouté (FIM/syscheck, Rule 554), mais ne sait pas nativement si ce fichier est malveillant. VirusTotal agrège les verdicts de dizaines de moteurs antivirus à partir d'un simple hash — brancher les deux permet de qualifier automatiquement chaque nouveau fichier détecté, sans intervention manuelle de l'analyste.
 
+
+![Bloc d'intégration VirusTotal complet](screenshots/virustotal-integration/virustotal.png)
+
 Cette intégration complète celle déjà en place avec MISP (`config/wazuh-misp-integration.md`) — les deux tournent en parallèle sur les mêmes événements Rule 554, MISP interrogeant la base de connaissance interne du lab, VirusTotal apportant un verdict externe indépendant.
 
 ---
