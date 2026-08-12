@@ -26,6 +26,9 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 **GPO :** Computer Configuration → Policies → Windows Settings → Security Settings → Account Policies
 
+![Politique de mot de passe](screenshots/windows-client-hardening/02-password-policy.png)
+
+
 ### 2.1 – Password Policy
 
 | Politique | Valeur configurée |
@@ -37,7 +40,7 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 | Password must meet complexity requirements | Enabled |
 | Store passwords using reversible encryption | Disabled |
 
-![Politique de mot de passe](screenshots/windows-client-hardening/02-password-policy.png)
+![Politique de verrouillage de compte](screenshots/windows-client-hardening/01-account-lockout-policy.png)
 
 ### 2.2 – Account Lockout Policy
 
