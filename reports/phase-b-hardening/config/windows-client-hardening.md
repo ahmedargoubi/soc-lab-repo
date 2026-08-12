@@ -69,12 +69,11 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 | Audit Security State Change (System) | ✅ | — | Démarrage/arrêt du système, changements d'état de sécurité |
 | Audit Security System Extension (System) | ✅ | — | Chargement d'extensions du sous-système de sécurité (ex. DLL d'authentification) |
 
-![Audit Credential Validation](screenshots/windows-client-hardening/03-audit-credential-validation.png)
-![Audit User Account Management](screenshots/windows-client-hardening/04-audit-user-account-management.png)
+![Configuration du profil de domaine](screenshots/windows-client-hardening/09-firewall-domain-profile.png)
 ![Turn off Microsoft Defender Antivirus = Disabled](screenshots/windows-client-hardening/11-defender-turn-off-antivirus-disabled.png)
-
+![Turn off real-time protection = Enabled](screenshots/windows-client-hardening/10-defender-turn-off-realtime-protection-ENABLED.png)
 ![Audit Special Logon](screenshots/windows-client-hardening/06-audit-special-logon.png)
-![Audit Security State Change](screenshots/windows-client-hardening/07-audit-security-state-change.png)
+
 ![Audit Security System Extension](screenshots/windows-client-hardening/08-audit-security-system-extension.png)
 
 **Lien avec la Phase A :** `Audit Process Creation` est la correction directe recommandée dans le rapport de la Simulation 3 (section 6.1, "Sysmon Deployment") — combinée à un déploiement Sysmon (traité séparément), cette politique fournit la visibilité sur l'exécution de processus qui manquait pour détecter `tasksche.exe`/`mssecsvc.exe` par une règle dédiée.
@@ -85,37 +84,31 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 **GPO :** Computer Configuration → Policies → Administrative Templates → Windows Components → Microsoft Defender Antivirus
 
-![Audit Process Creation](screenshots/windows-client-hardening/05-audit-process-creation.png)
+
 
 | Politique | Valeur configurée | Effet |
 |---|---|---|
-| Turn off Microsoft Defender Antivirus | **Disabled** | Defender reste actif — corrige directement la GPO `Disable Windows Defender` créée en Phase A |
-| Turn off real-time protection | **Enabled** ⚠️ | **La protection en temps réel reste désactivée** — voir alerte ci-dessous |
+| Turn off Microsoft Defender Antivirus | **Disabled** | 
+| Turn off real-time protection | **Enabled**  | 
 
+![Audit Credential Validation](screenshots/windows-client-hardening/03-audit-credential-validation.png)
+![Audit User Account Management](screenshots/windows-client-hardening/04-audit-user-account-management.png)
 
-![Turn off real-time protection = Enabled](screenshots/windows-client-hardening/10-defender-turn-off-realtime-protection-ENABLED.png)
-
-### ⚠️ Point critique à corriger avant de considérer ce chantier terminé
-
-La capture confirme que **`Turn off Microsoft Defender Antivirus` est bien réglé sur `Disabled`** — Defender n'est plus désactivé globalement, ce qui corrige le problème principal de la Phase A. **Mais la capture montre aussi que `Turn off real-time protection` est réglé sur `Enabled`** — ce qui signifie que **la protection en temps réel de Defender reste désactivée**, malgré Defender lui-même actif. C'est une configuration contradictoire : Defender "tourne" mais sans scanner activement les fichiers en temps réel — ce qui laisserait encore passer un exécutable comme WannaCry sans détection immédiate.
-
-**Action corrective nécessaire :** repasser `Turn off real-time protection` sur **`Disabled`** (ou `Not Configured`), puis revérifier avec :
-```powershell
-Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled, AntivirusEnabled
-```
-Le résultat attendu est `RealTimeProtectionEnabled : True` et `AntivirusEnabled : True`.
 
 ---
 
-## 5. Pare-feu Windows Defender
+## 4. Pare-feu Windows Defender
+
 
 **GPO :** Computer Configuration → Policies → Windows Settings → Security Settings → Windows Defender Firewall with Advanced Security
+
+![Audit Process Creation](screenshots/windows-client-hardening/05-audit-process-creation.png)
 
 | Profil | Firewall state | Inbound | Outbound |
 |---|---|---|---|
 | Domain Profile | On (recommended) | Block (default) | Allow (default) |
 
-![Configuration du profil de domaine](screenshots/windows-client-hardening/09-firewall-domain-profile.png)
+
 
 ⚠️ **À noter :** cette configuration active explicitement le pare-feu avec les valeurs **par défaut** de Windows (blocage entrant, autorisation sortante) — elle formalise et verrouille ce comportement via GPO (empêchant une désactivation locale non autorisée), mais ne durcit pas au-delà des réglages standards. Aucune règle entrante/sortante spécifique (ex. restriction du trafic SMB/RPC entre postes clients, pertinent après la Simulation 4) n'apparaît configurée dans cette capture.
 
@@ -129,7 +122,7 @@ Le résultat attendu est `RealTimeProtectionEnabled : True` et `AntivirusEnabled
 |---|---|
 | Turn on PowerShell Script Block Logging | **Enabled** |
 | Turn on Module Logging | **Enabled** — modules : `Microsoft.PowerShell.*`, `Microsoft.WSMan.Management` |
-
+![Audit Security State Change](screenshots/windows-client-hardening/07-audit-security-state-change.png)
 ![Script Block Logging activé](screenshots/windows-client-hardening/13-powershell-scriptblock-logging.png)
 ![Module Logging activé avec modules ciblés](screenshots/windows-client-hardening/14-powershell-module-logging.png)
 
