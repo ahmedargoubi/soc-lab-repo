@@ -70,13 +70,14 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 | Audit Security System Extension (System) | ✅ | — | Chargement d'extensions du sous-système de sécurité (ex. DLL d'authentification) |
 
 ![Configuration du profil de domaine](screenshots/windows-client-hardening/09-firewall-domain-profile.png)
-![Turn off Microsoft Defender Antivirus = Disabled](screenshots/windows-client-hardening/11-defender-turn-off-antivirus-disabled.png)
 ![Turn off real-time protection = Enabled](screenshots/windows-client-hardening/10-defender-turn-off-realtime-protection-ENABLED.png)
-
-![Script Block Logging activé](screenshots/windows-client-hardening/13-powershell-scriptblock-logging.png)
-![Module Logging activé avec modules ciblés](screenshots/windows-client-hardening/14-powershell-module-logging.png)
+![Turn off Microsoft Defender Antivirus = Disabled](screenshots/windows-client-hardening/11-defender-turn-off-antivirus-disabled.png)
 
 ![WinRM désactivé](screenshots/windows-client-hardening/12-winrm-disabled.png)
+
+![Module Logging activé avec modules ciblés](screenshots/windows-client-hardening/14-powershell-module-logging.png)
+
+![Script Block Logging activé](screenshots/windows-client-hardening/13-powershell-scriptblock-logging.png)
 
 **Lien avec la Phase A :** `Audit Process Creation` est la correction directe recommandée dans le rapport de la Simulation 3 (section 6.1, "Sysmon Deployment") — combinée à un déploiement Sysmon (traité séparément), cette politique fournit la visibilité sur l'exécution de processus qui manquait pour détecter `tasksche.exe`/`mssecsvc.exe` par une règle dédiée.
 
