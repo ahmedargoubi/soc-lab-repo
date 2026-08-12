@@ -215,19 +215,26 @@ Two separate live-shell sessions were run against the DMZ-Web client using `Linu
 
 The `Linux.Sys.Services` artifact enumerates all `systemd` services on the DMZ-Web host via `systemctl list-units --type=service`, with the raw output parsed using a Grok pattern into structured `Unit`, `Load`, `Active`, `Sub` fields, filtered to entries ending in `.service` (VQL source shown in Figures 11–12). The companion `Linux.Sys.Users` artifact parses `/etc/passwd` to return `User`, `Description`, `Uid`, `Gid`, `Homedir`, and `Shell` for every local account (VQL source shown in Figure 10).
 
+
+![Linux.Sys.BashShell — ls result](screenshots/cap20.png)
+
+
+![Linux.Sys.BashShell — ls result](screenshots/cap21.png)
+
+
 **Value:** A baseline service and account inventory makes it possible to spot an attacker-installed persistence mechanism disguised as a system service, or a new/unexpected local account (e.g., a UID 0 account that isn't `root`) — both classic persistence indicators. Running these Hunts fleet-wide, rather than host-by-host, makes it trivial to diff service and account lists across all Linux endpoints in one pass.
 
 ### 6.4 SSH Login Monitoring — `Linux.Syslog.SSHLogin`
 
 The `Linux.Syslog.SSHLogin` artifact parses `/var/log/{auth.log,secure}*` using a dedicated Grok expression that extracts, per line: `Timestamp`, `IP` (source), `Result` (accepted/failed/invalid user), `Method` (e.g. password, publickey), and `AttemptedUser` (VQL source and Grok pattern shown in Figure 13).
 
-**Value:** This is the primary artifact for detecting SSH brute-force attempts and confirming lateral movement between lab segments. Because the parsing logic (Grok pattern) is fully visible in the artifact source, it can be tuned if the target distribution's log format differs from the default `syslog`-style layout — a useful reference for the AD kill-chain scenarios already completed in Phase A, where SSH pivoting between zones was part of the attack path.
+
 
 ---
 
 ## 7. Conclusion
 
-### 7.1 Summary of Improvements
+
 
 Phase B's Velociraptor work moved the lab's DFIR capability from **manual, reactive, single-host triage** to a **centrally orchestrated, fleet-wide, repeatable hunting workflow**:
 
@@ -236,12 +243,7 @@ Phase B's Velociraptor work moved the lab's DFIR capability from **manual, react
 - Evidence that previously required console access to each of the five agent endpoints (DMZ-Web, AD-DC, HAROUN, AHMED, node1) is now collected centrally through the `Security-Core` server and reviewed in one place via the Notebook interface.
 - This directly, measurably reduces detection and triage time — a key metric for the portfolio's claimed risk reduction across the five professional roles (SOC, Pentest, Forensics, Malware Analysis, GRC) this lab is built to demonstrate.
 
-### 7.2 Next Steps
 
-- **Phase C — Re-attack:** Re-run the Phase A attack scenarios (SQLi, backdoor, WannaCry FIM, AD kill chain) with the Phase B Velociraptor Hunts already scheduled, to validate that the deployed artifacts actually surface the attacker's tradecraft in near-real time.
-- **Custom Artifacts:** Author bespoke VQL artifacts tailored to this lab's specific attack scenarios (e.g., a custom artifact to detect the specific backdoor persistence mechanism used in the Phase A backdoor exploitation scenario).
-- **SOAR Integration:** Wire Velociraptor Hunt results into the Shuffle SOAR pipeline so that a Wazuh/Suricata alert can automatically trigger a targeted Velociraptor collection against the affected host, closing the loop between detection and forensic response.
-- **MISP Correlation:** Cross-reference indicators recovered via `Windows.Search.FileFinder` and `Linux.Sys.Services` hunts against MISP threat intelligence to auto-flag known-bad hashes or filenames during collection.
 
 ---
 
