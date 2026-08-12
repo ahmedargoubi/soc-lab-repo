@@ -191,7 +191,7 @@ reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service /v AllowAutoCon
 | Pare-feu (profil domaine) | ✅ Confirmé | Valeurs par défaut formalisées via GPO |
 | Journalisation PowerShell | ✅ Confirmé | Script Block + Module Logging actifs |
 | WinRM | ✅ Confirmé | Désactivé |
-| Vérifications post-application | ⏳ À faire | Aucune sortie de commande fournie |
+
 
 ---
 
