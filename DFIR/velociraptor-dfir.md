@@ -40,7 +40,7 @@ The objective of this phase was to move from a purely reactive incident-response
 
 The full list of Hunts scheduled against the `HAROUN.PROJET.local` org during this phase:
 
-![Velociraptor Hunt Manager — list of all Hunts created in Phase B](screenshots/velo_hunt_manager_list.png)
+![Velociraptor Hunt Manager — list of all Hunts created in Phase B](screenshots/Capture_d_écran_2026-08-11_232808.png)
 *Figure 1 — Hunt Manager overview: seven Hunts covering critical services, running processes, file search, local users, system services, SSH login parsing, and Bash history.*
 
 ---
@@ -56,10 +56,10 @@ Two capabilities make it central to this lab's DFIR strategy:
 
 Endpoint filesystem and metadata can also be browsed directly through the Virtual File System (VFS) view, which exposes low-level artifact metadata (mtime/atime/ctime/btime, mode, device major/minor, filesystem type) for any file or directory on an enrolled client:
 
-![VFS browser — properties of /home/linux/.bash_history on the DMZ-Web client](screenshots/velo_vfs_bashhistory_properties.png)
+![VFS browser — properties of /home/linux/.bash_history on the DMZ-Web client](screenshots/Capture_d_écran_2026-08-12_122138.png)
 *Figure 2 — VFS view of `/home/linux/.bash_history` showing file size, permissions, and MACB timestamps, with an option to re-collect the file live from the client.*
 
-![VFS browser — properties of /bin symlink on a Windows-hosted Linux client](screenshots/velo_vfs_bin_properties.png)
+![VFS browser — properties of /bin symlink on a Windows-hosted Linux client](screenshots/Capture_d_écran_2026-08-12_121918.png)
 *Figure 3 — VFS view confirming `/bin` is a symlink to `usr/bin`, illustrating how Velociraptor surfaces filesystem structure without requiring shell access.*
 
 ### 3.1 Why Proactive Hunting Matters
@@ -89,7 +89,7 @@ The table below summarizes the built-in Velociraptor artifacts used in this phas
 
 Artifact discovery in the GUI — searching `BASH` surfaces both history-recovery and live-shell artifacts:
 
-![Artifact search results for "BASH"](screenshots/velo_select_artifact_bash_search.png)
+![Artifact search results for "BASH"](screenshots/Capture_d_écran_2026-08-10_181548.png)
 *Figure 4 — Searching the artifact catalog for "BASH" returns `Linux.Sys.BashHistory` and `Linux.Sys.BashShell`, along with the full underlying VQL for the live-shell session artifact.*
 
 ### 4.2 Windows Artifacts
@@ -100,13 +100,13 @@ Artifact discovery in the GUI — searching `BASH` surfaces both history-recover
 | `Windows.System.CriticalServices` | Checks that critical Windows services (AV, Windows Defender, update services, etc. — e.g. `WinDefend`, `MpsSvc`, `wuauserv`) are running. Flags tampering that disables endpoint protection, a common pre-ransomware/pre-exfiltration step. |
 | `Windows.Search.FileFinder` | Searches the filesystem by glob pattern, with optional YARA content inspection and file hashing/upload. Used to hunt for dropped malware, leaked credentials, or exfiltrated data staged on disk. |
 
-![Windows.System.CriticalServices artifact detail](screenshots/velo_select_artifact_criticalservices.png)
+![Windows.System.CriticalServices artifact detail](screenshots/Capture_d_écran_2026-08-11_232326.png)
 *Figure 5 — `Windows.System.CriticalServices`, mapped to ATT&CK T1089 (Disable or Modify Tools), with its default `lookupTable` of critical service names.*
 
-![Windows.System.Pslist artifact detail](screenshots/velo_select_artifact_pslist.png)
+![Windows.System.Pslist artifact detail](screenshots/Capture_d_écran_2026-08-11_232217.png)
 *Figure 6 — `Windows.System.Pslist` parameters, including regex filters and the `UntrustedAuthenticode` flag for isolating unsigned executables.*
 
-![Windows.Search.FileFinder artifact detail](screenshots/velo_select_artifact_filefinder.png)
+![Windows.Search.FileFinder artifact detail](screenshots/Capture_d_écran_2026-08-11_232102.png)
 *Figure 7 — `Windows.Search.FileFinder`, showing its documented use cases (credential dumps, PCI data exposure, malware search) and performance guidance on rate-limiting.*
 
 ---
@@ -129,26 +129,26 @@ From the Velociraptor GUI (`https://192.168.9.133:8889`), navigate to **Hunt Man
 
 The wizard shows a live **Estimated affected clients** count, confirming how many enrolled endpoints match the current filter before the Hunt is even launched.
 
-![Configure Hunt — BashHistory targeting Linux clients](screenshots/velo_hunt_config_bashhistory.png)
+![Configure Hunt — BashHistory targeting Linux clients](screenshots/Capture_d_écran_2026-08-10_181354.png)
 *Figure 8 — Configure Hunt tab for the `BashHistory` Hunt: OS filter set to `Linux`, 7-day expiry, estimated 1 affected client.*
 
-![Configure Hunt — Recherche de fichiers targeting Windows clients](screenshots/velo_hunt_config_filefinder.png)
+![Configure Hunt — Recherche de fichiers targeting Windows clients](screenshots/Capture_d_écran_2026-08-11_232027.png)
 *Figure 9 — Configure Hunt tab for the file-search Hunt: OS filter set to `Windows`, estimated 3 affected clients.*
 
 ### 5.2 Select Artifacts
 
 On the **Select Artifacts** tab, the target artifact is located via the search box. Selecting an artifact displays its full description, DFIR use case, any ATT&CK references, and its underlying **VQL source**, which is fully visible and auditable.
 
-![Linux.Sys.Users artifact selected](screenshots/velo_select_artifact_linuxusers.png)
+![Linux.Sys.Users artifact selected](screenshots/Capture_d_écran_2026-08-11_231130.png)
 *Figure 10 — `Linux.Sys.Users` selected, showing its VQL source: a `split_records` parse of `/etc/passwd` into `User, Description, Uid, Gid, Homedir, Shell` columns.*
 
-![Linux.Sys.Services artifact — VQL source (part 1)](screenshots/velo_select_artifact_linuxservices_1.png)
+![Linux.Sys.Services artifact — VQL source (part 1)](screenshots/Capture_d_écran_2026-08-11_230951.png)
 *Figure 11 — `Linux.Sys.Services` selected: the VQL wraps `execve('systemctl', ['list-units','--type=service'])` and Grok-parses each line into structured fields.*
 
-![Linux.Sys.Services artifact — VQL source (part 2)](screenshots/velo_select_artifact_linuxservices_2.png)
+![Linux.Sys.Services artifact — VQL source (part 2)](screenshots/Capture_d_écran_2026-08-11_230947.png)
 *Figure 12 — Full `Linux.Sys.Services` query, filtering parsed rows down to entries whose `Unit` ends in `.service`.*
 
-![Linux.Syslog.SSHLogin artifact detail](screenshots/velo_select_artifact_sshlogin.png)
+![Linux.Syslog.SSHLogin artifact detail](screenshots/Capture_d_écran_2026-08-11_230746.png)
 *Figure 13 — `Linux.Syslog.SSHLogin` selected, showing the default log path (`/var/log/{auth.log,secure}*`), the dedicated `SSHGrok` parsing pattern, and the reference to Elastic's Grokking-the-Linux-auth-logs blog post.*
 
 Multiple artifacts can be added to a single Hunt when it makes sense to collect related evidence in one pass.
@@ -177,7 +177,7 @@ On the **Specify Resources** tab, guardrails are applied so that forensic collec
 | Max MB Uploaded | 1 GB (default) |
 | Urgent | Unchecked (queued normally, not prioritized) |
 
-![Specify resource limits tab](screenshots/velo_resource_limits.png)
+![Specify resource limits tab](screenshots/Capture_d_écran_2026-08-10_181602.png)
 *Figure 14 — CPU capped at 30%, all other limits left at Velociraptor's safe defaults, ensuring the Hunt runs as a background task without contending with normal endpoint workloads.*
 
 ### 5.5 Review and Launch
@@ -192,7 +192,7 @@ The **Review** tab presents the full Hunt configuration — targeting filter, ar
 
 The `BashHistory` Hunt (`H.D9SUMD8LA9JEC`) was scheduled against the `dmz` client and collected 50 lines from `/home/linux/.bash_history`. Results are reviewed in the Hunt's **Notebook** tab, which presents each recovered line alongside its source path, Flow ID, Client ID, and FQDN for full traceability:
 
-![Linux.Sys.BashHistory results in the Hunt Notebook](screenshots/velo_bashhistory_notebook_results.png)
+![Linux.Sys.BashHistory results in the Hunt Notebook](screenshots/Capture_d_écran_2026-08-10_181728.png)
 *Figure 15 — Notebook view of the `BashHistory` Hunt: recovered commands (`ping`, `ip a`, `ping 8.8.8.8`, ...) from `/home/linux/.bash_history` on client `C.db681f5eaa3bff35` (FQDN `dmz`).*
 
 **Value:** Bash history is one of the highest-signal artifacts on a compromised Linux host. It directly reveals what an operator (legitimate or attacker) typed interactively — reconnaissance commands (`ip a`), connectivity checks (`ping`), tool downloads, privilege-escalation attempts, or exfiltration commands. Because it is recovered centrally through a Hunt rather than by SSH-ing into each box, this evidence is preserved with a timestamp and chain of custody even if the attacker later attempts to clear their local history.
@@ -201,10 +201,10 @@ The `BashHistory` Hunt (`H.D9SUMD8LA9JEC`) was scheduled against the `dmz` clien
 
 Two separate live-shell sessions were run against the DMZ-Web client using `Linux.Sys.BashShell`, which opens an interactive session rather than a one-shot query:
 
-![Linux.Sys.BashShell — whoami result](screenshots/velo_bashshell_whoami_result.png)
+![Linux.Sys.BashShell — whoami result](screenshots/Capture_d_écran_2026-08-12_120916.png)
 *Figure 16 — Live shell session result: `whoami` returns `root`, confirming the privilege level of the current Velociraptor session on the client.*
 
-![Linux.Sys.BashShell — ls result](screenshots/velo_bashshell_ls_result.png)
+![Linux.Sys.BashShell — ls result](screenshots/Capture_d_écran_2026-08-12_121227.png)
 *Figure 17 — Live shell session result: `ls` returns the full root directory listing (`bin, boot, cdrom, dev, etc, home, lib, lib64, lost+found, media, mnt, opt, proc, root, run, sbin, snap, srv, ...`).*
 
 **Value:** Unlike the fixed set of pre-built artifacts, `BashShell` gives an analyst a live, ad-hoc command channel to any enrolled endpoint. Confirming the session is running as `root` establishes the privilege level available for the collection, which matters when scoping what evidence can be reliably gathered (e.g., reading protected log files or process memory).
