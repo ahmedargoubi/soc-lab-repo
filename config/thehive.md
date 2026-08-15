@@ -258,7 +258,7 @@ sudo chown root:wazuh /var/ossec/integrations/custom-w2thive.py
 sudo chown root:wazuh /var/ossec/integrations/custom-w2thive
 ```
 
-![Copie, permissions et propriétaire du connecteur](thehive+shuffle/c9.png)
+![Édition de ossec.conf et redémarrage de wazuh-manager](thehive+shuffle/c10.png)
 
 ### 8.5 – Configuration de `ossec.conf` et redémarrage
 
@@ -282,15 +282,8 @@ Le service `wazuh-manager` est ensuite redémarré pour prendre en compte le nou
 sudo systemctl restart wazuh-manager
 ```
 
-![Édition de ossec.conf et redémarrage de wazuh-manager](thehive+shuffle/c10.png)
 
-### 8.6 – Statut
 
-✅ Organisation/utilisateur TheHive dédiés créés, clé API générée.
-✅ Connecteur `wazuh2thehive` installé et câblé (dépendances, permissions, `ossec.conf`, service redémarré).
-⏳ Test de bout en bout (déclenchement Rule 5763 → apparition effective d'un cas dans TheHive) — à documenter séparément une fois vérifié.
-
----
 
 ## 9. Dépannage
 
@@ -304,9 +297,4 @@ sudo systemctl restart wazuh-manager
 
 ---
 
-## 10. Statut actuel
 
-✅ Installation et configuration de base terminées (Cassandra, Elasticsearch, TheHive, tous démarrés).
-⏳ Intégration avec Wazuh/Shuffle — prévue, pas encore réalisée (section 8).
-
-> 🚧 Captures en attente — les emplacements ci-dessus sont prêts à recevoir les images une fois envoyées.
