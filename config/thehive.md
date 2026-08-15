@@ -10,6 +10,9 @@ TheHive sert de plateforme de gestion des incidents ("case management") pour le 
 
 TheHive est une plateforme open-source de réponse à incident (Security Incident Response Platform). Elle permet de transformer une alerte brute (venant d'un SIEM comme Wazuh) en un **cas** structuré : tâches à réaliser, observables (IOCs) à analyser, notes d'investigation, statut de résolution — le tout traçable et partageable entre analystes.
 
+
+![Installation des dépendances et de Java 11](thehive+shuffle/b4d8bee8-ae9a-480a-bd44-c153abb5181d.png)
+
 ### 1.2 – Pourquoi dans ce lab
 
 Jusqu'ici, le lab dispose de détection (Wazuh), de threat intelligence (MISP), d'automatisation (Shuffle) — mais d'aucun endroit centralisé pour **suivre le cycle de vie d'un incident** (de la détection à la clôture). TheHive comble ce manque : c'est la pièce "GRC/gestion opérationnelle" qui manquait pour boucler la boucle SOC complète.
