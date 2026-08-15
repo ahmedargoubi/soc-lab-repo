@@ -216,16 +216,9 @@ Shuffle's Autocomplete panel while building the node:
 An **Email → "Send email smtp"** action was added after the active-response
 node.
 
-> A cloud-relay **"Send email shuffle"** action was tried first — this
-> depends on the personal API key found under Shuffle's own account
-> Settings page:
->
+
 > ![Shuffle account API key settings](images/cap6.png) <br>
->
-> It returned `404 page not found` regardless of the key, because that
-> action calls Shuffle's hosted cloud relay (`shuffler.io`), which the
-> on-prem Shuffle instance used in this lab cannot reach. It was replaced
-> with a standard **SMTP** email action instead.
+
 
 **SMTP configuration:**
 
