@@ -100,6 +100,7 @@ seeds: "192.168.9.133,7000"
 ![Configuration Cassandra — cluster/listen](thehive+shuffle/1.png)
 ![Configuration Cassandra — cluster/listen](thehive+shuffle/2.png)
 ![Configuration Cassandra — cluster/listen](thehive+shuffle/3.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/4.png)
 
 ### 5.2 – Elasticsearch (`/etc/elasticsearch/elasticsearch.yml`)
 
@@ -109,7 +110,7 @@ cluster.initial_master_nodes: ["node-1"]
 ```
 
 ![Configuration Cassandra — cluster/listen](thehive+shuffle/6.png)
-
+![Configuration Cassandra — cluster/listen](thehive+shuffle/7.png)
 
 ### 5.3 – TheHive (`/etc/thehive/application.conf`)
 
