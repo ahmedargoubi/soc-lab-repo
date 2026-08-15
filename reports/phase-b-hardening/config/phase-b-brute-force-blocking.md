@@ -186,12 +186,6 @@ manager's real IP instead of `localhost` (Shuffle cannot resolve
 
 
 
-> **Dead end worth noting:** the Wazuh app's own dedicated "Run command"
-> action (with a locked `Apikey`/`Url` authentication object) was tried
-> first. Its credential fields only accept **static** values — incompatible
-> with a JWT that expires roughly every 15 minutes. That node was
-> abandoned in favor of the plain **Http** app action shown above, which
-> allows fully dynamic variables in every field.
 
 ### 4.5 Active-response call — the actual IP block
 
