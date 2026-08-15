@@ -103,7 +103,7 @@ logic must not assume the attacker only tries invalid usernames.
 The custom rule that was authored during initial testing (kept for
 reference / defense-in-depth) is shown below:
 
-![Custom brute-force rule XML](images/01-custom-brute-force-rule.png) <br>
+![Custom brute-force rule XML](images/cap21.png) <br>
 *Custom Wazuh rule (id 5764) chained to sid 5710, MITRE T1110 tagged.*
 
 ### 3.2 Verifying detections in the Wazuh dashboard
