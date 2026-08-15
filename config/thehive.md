@@ -53,7 +53,7 @@ sudo apt update
 sudo apt install -y java-11-amazon-corretto-jdk
 ```
 
-![Installation des dépendances et de Java 11](screenshots/thehive/01-dependencies-java-install.png)
+
 
 ### 4.2 – Apache Cassandra
 
@@ -82,7 +82,7 @@ sudo apt update
 sudo apt install -y thehive
 ```
 
-![Installation de TheHive](screenshots/thehive/02-thehive-install.png)
+
 
 ---
 
@@ -97,9 +97,9 @@ rpc_address: 192.168.9.133
 seeds: "192.168.9.133,7000"
 ```
 
-![Configuration Cassandra — cluster/listen](screenshots/thehive/03-cassandra-yaml-cluster.png)
-![Configuration Cassandra — listen_address/rpc_address](screenshots/thehive/04-cassandra-listen-rpc-address.png)
-![Configuration Cassandra — seeds](screenshots/thehive/05-cassandra-seeds.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/1.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/2.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/3.png)
 
 ### 5.2 – Elasticsearch (`/etc/elasticsearch/elasticsearch.yml`)
 
@@ -108,8 +108,8 @@ network.host: 192.168.9.133
 cluster.initial_master_nodes: ["node-1"]
 ```
 
-![Configuration Elasticsearch — network.host](screenshots/thehive/06-elasticsearch-network-host.png)
-![Configuration Elasticsearch — discovery seed hosts](screenshots/thehive/07-elasticsearch-discovery-seeds.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/6.png)
+
 
 ### 5.3 – TheHive (`/etc/thehive/application.conf`)
 
@@ -138,8 +138,8 @@ storage {
 }
 ```
 
-![Configuration TheHive — section base de données](screenshots/thehive/09-thehive-application-conf-db.png)
-![Configuration TheHive — baseUrl](screenshots/thehive/10-thehive-application-conf-baseurl.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/9.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/10.png)
 
 ---
 
@@ -154,17 +154,17 @@ sudo systemctl enable --now thehive
 ```bash
 sudo systemctl status cassandra
 ```
-![Statut Cassandra](screenshots/thehive/08-cassandra-status.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/5.png)
 
 ```bash
 sudo systemctl status elasticsearch
 ```
-![Statut Elasticsearch](screenshots/thehive/11-elasticsearch-status.png)
+![Configuration Cassandra — cluster/listen](thehive+shuffle/8.png)
 
 ```bash
 sudo systemctl status thehive
 ```
-
+![Configuration Cassandra — cluster/listen](thehive+shuffle/14.png)
 ⚠️ **Ordre de démarrage important :** Cassandra doit être pleinement opérationnel (`nodetool status` → `UN` = Up/Normal) avant qu'Elasticsearch et TheHive ne démarrent proprement — un démarrage simultané à froid échoue souvent. Vérifier avec `nodetool status` en cas de souci au premier lancement.
 
 ---
@@ -173,14 +173,16 @@ sudo systemctl status thehive
 
 Interface web : **`http://192.168.9.133:9000`**
 
+![Configuration Cassandra — cluster/listen](thehive+shuffle/11.png)
+
 **Identifiants par défaut :**
 | Champ | Valeur |
 |---|---|
 | Login | `admin@thehive.local` |
 | Mot de passe | `secret` |
 
-![Page de connexion TheHive](screenshots/thehive/12-thehive-login-page.png)
-![Liste des organisations après connexion](screenshots/thehive/13-thehive-organisation-list.png)
+
+![Configuration Cassandra — cluster/listen](thehive+shuffle/12.png)
 
 ⚠️ **Changer ce mot de passe immédiatement après la première connexion** — identifiants par défaut publics et bien connus.
 
