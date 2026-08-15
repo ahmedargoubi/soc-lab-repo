@@ -272,17 +272,6 @@ hydra -L users.txt -P password.txt ssh://192.168.8.127
 
 ![Custom brute-force rule XML](images/4.png)
 
-Two things are worth noting about this run:
-
-- Hydra found a **valid password for a real account** (`ansible`), not a
-  non-existent username. This confirms the earlier decision in Section 3.1
-  to trigger on Wazuh's built-in rule `5763` rather than the custom
-  non-existent-username rule — a username-existence-based rule would have
-  missed this exact attack.
-- The attack ran fast enough (14 parallel tasks) to comfortably exceed the
-  rule's frequency threshold (3 failures within 60 seconds), which is what
-  actually causes rule `5763` to fire as an aggregate detection rather than
-  only the noisier per-attempt rule `5760`.
 
 At this point, before any response has happened, the target is still fully
 reachable from Kali — this is confirmed as the "before" state in the next
