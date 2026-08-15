@@ -43,7 +43,7 @@ flowchart TD
     D["4. The analyst is notified by email<br/>the moment the block happens"]
 
     A --> B
-    B --> C
+    A --> C
     B --> D
 ```
 
