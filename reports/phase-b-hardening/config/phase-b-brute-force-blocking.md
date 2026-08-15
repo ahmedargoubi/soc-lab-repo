@@ -16,22 +16,21 @@ especially outside working hours. The goal of this phase was to build a fully
 automated detection → containment → case-management pipeline so that:
 
 1. **Wazuh** detects the brute-force pattern in near real time.
+![Custom brute-force rule XML](images/wazuh.png) <br>
+
 2. **Shuffle** (SOAR) receives the alert, validates it, and automatically
    blocks the attacker's IP at the target host.
+
+![Custom brute-force rule XML](images/shuffle.png) <br>
+
 3. **TheHive** turns the qualifying alert into a case-management ticket, so a
    human analyst still reviews, documents, and formally closes the incident —
    automation handles containment speed, the analyst handles judgment and
    record-keeping.
+![Custom brute-force rule XML](images/thehive.png) <br>
+   
 4. The analyst is notified by **email** the moment the block happens.
 
-> **Architecture note:** the original design considered blocking the
-> attacker at the network edge (OPNsense firewall alias). The pipeline that
-> was actually built and fully tested blocks the attacker's IP directly on
-> the targeted host via **Wazuh's native Active Response**
-> (`firewall-drop0` / `iptables`). This was proven end-to-end (detection →
-> block → verified loss of connectivity from the attacker). OPNsense-level
-> blocking is documented as a **future enhancement** in Section 10, rather
-> than described here as implemented.
 
 ### High-level flow
 
