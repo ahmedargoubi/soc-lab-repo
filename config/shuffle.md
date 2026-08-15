@@ -1,6 +1,6 @@
 # Installation & Configuration — Shuffle SOAR
 
-Shuffle est le composant SOAR (Security Orchestration, Automation and Response) du lab — il reçoit les alertes Wazuh via webhook et exécute des workflows automatisés (voir `reports/phase-b-hardening/` pour les playbooks construits dessus : blocage réseau, isolation d'hôte, désactivation de compte AD).
+Shuffle est le composant SOAR (Security Orchestration, Automation and Response) du lab — il reçoit les alertes Wazuh via webhook et exécute des workflow automatisé (voir `reports/phase-b-hardening/` .
 
 ---
 
@@ -9,6 +9,8 @@ Shuffle est le composant SOAR (Security Orchestration, Automation and Response) 
 ### 1.1 – Qu'est-ce que Shuffle SOAR
 
 Shuffle est une plateforme SOAR open-source, auto-hébergeable, qui orchestre des réponses automatisées à partir d'alertes de sécurité. Elle reçoit des événements (ici, via un webhook déclenché par Wazuh), applique une logique de workflow (branchements conditionnels, approbation humaine, appels API), et déclenche des actions concrètes (blocage d'IP, création de cas, notification).
+
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/Wazuh-and-Shuffle-Announce-Technology-Partnership-logo-removebg-preview.png)
 
 ### 1.2 – Pourquoi dans ce lab
 
@@ -68,8 +70,8 @@ SHUFFLE_OPENSEARCH_PASSWORD=Shuffle123!
 docker compose up -d
 ```
 
-![Logs d'installation et de démarrage Docker Compose](screenshots/shuffle/01-docker-compose-install-logs.png)
-![Shuffle en attente de la base de données au premier démarrage](screenshots/shuffle/02-shuffle-waiting-for-database.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap1.png)
+
 
 ---
 
@@ -79,15 +81,15 @@ docker compose up -d
 
 Interface : **`http://192.168.9.144:3001`**
 
-![Formulaire de création du compte admin](screenshots/shuffle/03-admin-account-creation-form.png)
-![Tableau de bord Shuffle (vue Open Source)](screenshots/shuffle/04-shuffle-dashboard-opensource.png)
-![Page Discover Workflows](screenshots/shuffle/05-discover-workflows-page.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap3.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap4.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap5.png)
 
 ### 4.2 – Intégration Wazuh (webhook)
 
 **Côté Shuffle :** création d'un workflow avec un déclencheur **Webhook**, générant une URL unique (`webhook_25c99880-a47d-4252-a989-8ce1833e63c6`).
 
-![Configuration du déclencheur webhook dans Shuffle](screenshots/shuffle/07-webhook-trigger-config.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap7.png)
 
 **Côté Wazuh** (`/var/ossec/etc/ossec.conf`, sur le Manager Security-Core) :
 ```xml
@@ -99,9 +101,8 @@ Interface : **`http://192.168.9.144:3001`**
 </integration>
 ```
 
-![Bloc d'intégration Shuffle dans ossec.conf](screenshots/shuffle/06-ossec-conf-shuffle-integration.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap6.png)
 
-⚠️ Ce bloc initial utilise `<level>3</level>` (tout événement de niveau ≥3) plutôt qu'un `<rule_id>` ciblé — utile pour valider que le webhook reçoit bien du trafic pendant les tests, mais **trop large pour un usage en production** (génère du bruit sur des événements mineurs). Voir `reports/phase-b-hardening/phase-b-shuffle-soar.md` pour l'évolution vers des intégrations séparées par type de playbook (réseau, malware, AD).
 
 ```bash
 sudo systemctl restart wazuh-manager
@@ -111,7 +112,7 @@ sudo systemctl restart wazuh-manager
 
 Workflow minimal utilisant le node **"Repeat back to me"** de Shuffle (fonctionne comme un echo — renvoie simplement ce qu'il reçoit), pour confirmer que la réception fonctionne avant de construire une logique plus complexe.
 
-![Configuration du workflow de test repeat_back_to_me](screenshots/shuffle/08-test-workflow-repeat-back.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap8.png)
 
 ---
 
@@ -119,35 +120,10 @@ Workflow minimal utilisant le node **"Repeat back to me"** de Shuffle (fonctionn
 
 Déclencher n'importe quel événement Wazuh de niveau ≥3 sur un agent surveillé, puis vérifier :
 
-![Log d'exécution montrant une alerte Wazuh reçue avec succès](screenshots/shuffle/09-execution-log-alert-received.png)
+![Logs d'installation et de démarrage Docker Compose](thehive+shuffle/cap9.png)
 
 ✅ Confirmé — les alertes Wazuh atteignent bien Shuffle via le webhook, et le workflow de test les traite correctement.
 
 ---
 
-## 6. Dépannage
 
-| Symptôme | Cause probable | Solution |
-|---|---|---|
-| Conflit de port (3001, 5001, 9201) | Un autre service occupe déjà le port sur `node4` | `sudo ss -tlnp \| grep <port>` — même type de diagnostic que pour le conflit privacyIDEA/MISP sur Security-Core |
-| Erreur de permissions sur la base de données | `DB_LOCATION` (`/opt/shuffle/database`) pas accessible en écriture par l'utilisateur Docker | `sudo chown -R 1000:1000 /opt/shuffle/database` (ou l'UID utilisé par les conteneurs Shuffle) |
-| Erreurs SSL/TLS au premier accès | Certificat auto-signé sur `FRONTEND_PORT_HTTPS` | Accéder via `http://192.168.9.144:3001` (port HTTP) plutôt que le port HTTPS tant que TLS n'est pas configuré explicitement |
-| Webhook Wazuh → Shuffle ne reçoit rien | Webhook non démarré côté Shuffle (doit être explicitement activé/lancé dans l'éditeur de workflow avant de recevoir du trafic) | Vérifier que le workflow est bien "en ligne" (statut actif) dans l'interface, pas juste sauvegardé |
-
----
-
-## 7. Prochaines étapes
-
-- Construire des workflows avancés au-delà du test `SOC_wazuh` : blocage d'IP via l'API Wazuh Active Response (`firewall-drop`), isolation d'hôte, désactivation de compte AD compromis — voir `reports/phase-b-hardening/phase-b-shuffle-soar.md`.
-- Intégrer la création automatique de cas dans TheHive (`config/thehive.md`, section 8) pour chaque alerte escaladée.
-- Affiner les intégrations `ossec.conf` : passer de `<level>3</level>` (large) à des `<rule_id>` ciblés par playbook, pour réduire le bruit.
-
----
-
-## 8. Statut actuel
-
-✅ Installation Docker Compose, démarrage des conteneurs, création du compte admin, intégration webhook de base — confirmés fonctionnels (réception d'alertes testée avec succès).
-⏳ Workflows de réponse automatisée avancés (blocage IP, isolation, désactivation de compte) — en cours, voir rapport Phase B dédié.
-⏳ Intégration TheHive — prévue, pas encore réalisée.
-
-> 🚧 Captures en attente — les emplacements ci-dessus sont prêts à recevoir les images une fois envoyées.
