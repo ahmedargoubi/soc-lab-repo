@@ -307,14 +307,8 @@ Filter result `valid: 1 item`.*
 sudo iptables -L -n -v
 ```
 
-```
-Chain INPUT (policy ACCEPT 141 packets, 7955 bytes)
- pkts bytes target     prot opt in     out     source               destination
-    0     0 DROP       all  --  *      *       192.168.163.164      0.0.0.0/0
-Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
- pkts bytes target     prot opt in     out     source               destination
-    0     0 DROP       all  --  *      *       192.168.163.164      0.0.0.0/0
-```
+![Kali hydra attack and blocked ping](images/6.png)
+
 
 ### 6.4 The attacker can no longer reach the target
 
