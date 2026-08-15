@@ -211,15 +211,6 @@ Shuffle's Autocomplete panel while building the node:
 
 **Ssl verify:** `False` (the Wazuh manager uses a self-signed certificate).
 
-**Key lesson learned:** the `firewall-drop` active-response script reads
-the source IP from the **`alert.data.srcip`** JSON path — *not* from a
-generic `arguments`/`extra_args` array. An early version of this body used
-`"arguments":["-src","$exec.all_fields.data.srcip"]`, which the manager
-accepted (HTTP 200) but the agent-side script rejected with
-`Cannot read 'srcip' from data`, silently failing to block anything despite
-the API reporting success. This was only caught by reviewing
-`/var/ossec/logs/active-responses.log` on the target host — see Section 6.
-
 ### 4.6 Email notification
 
 An **Email → "Send email smtp"** action was added after the active-response
