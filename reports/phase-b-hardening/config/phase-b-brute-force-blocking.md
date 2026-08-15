@@ -24,14 +24,7 @@ automated detection → containment → case-management pipeline so that:
    record-keeping.
 4. The analyst is notified by **email** the moment the block happens.
 
-> **Architecture note:** the original design considered blocking the
-> attacker at the network edge (OPNsense firewall alias). The pipeline that
-> was actually built and fully tested blocks the attacker's IP directly on
-> the targeted host via **Wazuh's native Active Response**
-> (`firewall-drop0` / `iptables`). This was proven end-to-end (detection →
-> block → verified loss of connectivity from the attacker). OPNsense-level
-> blocking is documented as a **future enhancement** in Section 10, rather
-> than described here as implemented.
+
 
 ### High-level flow (as implemented)
 
