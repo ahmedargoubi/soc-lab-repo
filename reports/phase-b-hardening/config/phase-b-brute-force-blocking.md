@@ -184,15 +184,7 @@ JWT:
 manager's real IP instead of `localhost` (Shuffle cannot resolve
 `localhost` from its own container context).*
 
-![Wazuh Api Key curl node, formatted](images/cap14.png)
-*Same statement, reformatted across multiple lines for readability —
-functionally identical.*
 
-```bash
-curl -k -u 'wazuh:<password>' \
-  -X GET \
-  'https://192.168.9.133:55000/security/user/authenticate?raw=true'
-```
 
 > **Dead end worth noting:** the Wazuh app's own dedicated "Run command"
 > action (with a locked `Apikey`/`Url` authentication object) was tried
