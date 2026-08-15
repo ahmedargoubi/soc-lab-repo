@@ -528,42 +528,9 @@ and signed off on it inside TheHive's audit trail.
 
 ---
 
-## 9. Lessons Learned / Troubleshooting Summary
 
-| Issue | Root cause | Fix |
-|---|---|---|
-| Shuffle rejected `localhost` in URLs | Shuffle cannot resolve `localhost` from its own container/host context | Replaced with the Wazuh manager's real LAN IP |
-| Filter node didn't stop execution on no-match | "Filter list" only labels data `valid`/`invalid`; it does not halt the workflow branch by itself | Added an explicit **condition** on the connection line (`$exec.rule_id equals 5763`) |
-| Custom rule 5764 (sid 5710) never fired during the real test | The attacker guessed a password for a **real** account (`ansible`), not a non-existent username | Used Wazuh's built-in aggregate rule `5763` instead, which fires on repeated failures regardless of username validity |
-| Active-response accepted (`HTTP 200`) but never actually blocked anything | `firewall-drop` script reads `alert.data.srcip`, not a generic `arguments` array | Changed the Body payload to `{"command":"firewall-drop0","alert":{"data":{"srcip":"..."}}}` |
-| Locked `Apikey`/`Url` fields on the dedicated Wazuh app node rejected dynamic variables | That action's Authentication object only supports static credentials, incompatible with a JWT that expires every ~15 minutes | Replaced with a plain **Http** app node, which allows dynamic variables in every field |
-| Email action failed with `404 page not found` | "Send email shuffle" depends on Shuffle's hosted cloud relay (`shuffler.io`), unreachable from this on-prem instance | Switched to a standard **SMTP** email action |
-| Email failed with `530 5.7.0 Authentication Required` | Gmail rejects plain-password SMTP logins for third-party senders | Generated a Gmail **App Password** and used it in place of the account password |
-| TheHive flooded with 331 irrelevant alerts | The Wazuh→TheHive forwarding had no rule filtering — every alert (including unrelated internal noise) was forwarded | Scoped the integration to `rule_id 5763` only |
 
----
-
-## 10. Future Enhancements
-
-- **OPNsense-level blocking**: extend the workflow to also add the
-  attacker's IP to an OPNsense firewall alias, blocking at the network
-  edge in addition to the host-level `iptables` block already implemented.
-  This would provide defense-in-depth if the target host's own firewall is
-  ever bypassed or reset.
-- **Auto-unblock / TTL**: the current active-response block has no
-  automatic expiry (`timeout no` in `ossec.conf`). Consider adding a
-  time-bound unblock, or a manual "unblock" task in the TheHive case
-  workflow.
-- **Case templates**: build a reusable TheHive case template
-  ("SSH Brute Force Response") pre-populated with the standard 5-task
-  checklist used in Section 8.4, instead of adding tasks manually each
-  time an alert is promoted.
-- **Multi-service coverage**: extend detection beyond SSH to RDP and FTP
-  brute-force patterns, as originally scoped.
-
----
-
-## 11. Conclusion
+## 9. Conclusion
 
 This phase delivered a working, tested automation pipeline that takes a
 brute-force SSH attack from first detection to a fully documented, closed
