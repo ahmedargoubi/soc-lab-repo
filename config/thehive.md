@@ -197,7 +197,98 @@ Flux prévu, une fois câblé :
 Wazuh (alerte) → Shuffle (webhook + logique de playbook) → TheHive (création automatique d'un cas)
 ```
 
-Shuffle appellera l'API TheHive (`POST /api/v1/case`) pour créer un cas structuré à partir de chaque alerte à haute sévérité, avec les observables (IPs, hashs) extraits automatiquement de l'alerte source. Détail des étapes à ajouter une fois cette intégration testée (cf. `config/shuffle.md` pour l'état actuel de Shuffle).
+### 8.1 – Préparation TheHive : organisation et utilisateur dédiés
+
+Une organisation dédiée `ahmed` est créée (au lieu d'utiliser l'organisation `admin` par défaut), afin d'isoler les cas générés par l'intégration Wazuh.
+
+![Création de l'organisation "ahmed"](thehive+shuffle/c1.png)
+
+Un utilisateur `ahmed@gmail.com` est ensuite ajouté à cette organisation avec le rôle `org-admin`.
+
+![Ajout de l'utilisateur ahmed@gmail.com](thehive+shuffle/c2.png)
+
+### 8.2 – Génération de la clé API
+
+Une clé API est créée puis révélée pour cet utilisateur — elle servira d'authentification pour le script d'intégration côté Wazuh.
+
+![Fiche utilisateur ahmed — création de la clé API](thehive+shuffle/c3.png)
+
+![Fiche utilisateur ahmed — réinitialisation du mot de passe](thehive+shuffle/c4.png)
+
+![Clé API révélée](thehive+shuffle/c5.png)
+
+⚠️ Cette clé (`RBs/Vy74wtHEi+R5zLsSLFAG15CUbVRS` dans ce lab) doit être traitée comme un secret — elle est reprise telle quelle dans `ossec.conf` (section 8.5).
+
+### 8.3 – Récupération et installation du connecteur (wazuh2thehive)
+
+Le script d'intégration provient du dépôt [crow1011/wazuh2thehive](https://github.com/crow1011/wazuh2thehive), cloné directement sur Security-Core :
+
+```bash
+sudo git clone https://github.com/crow1011/wazuh2thehive.git
+```
+
+![git clone du dépôt wazuh2thehive](thehive+shuffle/c6.png)
+
+Les dépendances Python du script (dont `thehive4py`, `future`, `python-magic`) sont installées via l'interpréteur Python embarqué de Wazuh :
+
+```bash
+sudo /var/ossec/framework/python/bin/python3 -m pip install -r /opt/wazuh2thehive/requirements.txt
+```
+
+![Installation des dépendances (requirements.txt)](thehive+shuffle/c7.png)
+
+`thehive4py` est également installé de façon autonome pour confirmer la résolution de version (2.1.0) :
+
+```bash
+sudo /var/ossec/framework/python/bin/python3 -m pip install thehive4py
+```
+
+![Installation de thehive4py](thehive+shuffle/c8.png)
+
+### 8.4 – Déploiement du connecteur dans `/var/ossec/integrations`
+
+Le script (wrapper shell + implémentation Python) est copié vers le répertoire d'intégrations de Wazuh, avec les permissions et le propriétaire attendus par `wazuh-manager` :
+
+```bash
+sudo cp /opt/wazuh2thehive/custom-w2thive.py /var/ossec/integrations/custom-w2thive.py
+sudo cp /opt/wazuh2thehive/custom-w2thive /var/ossec/integrations/custom-w2thive
+sudo chmod 755 /var/ossec/integrations/custom-w2thive.py
+sudo chmod 755 /var/ossec/integrations/custom-w2thive
+sudo chown root:wazuh /var/ossec/integrations/custom-w2thive.py
+sudo chown root:wazuh /var/ossec/integrations/custom-w2thive
+```
+
+![Copie, permissions et propriétaire du connecteur](thehive+shuffle/c9.png)
+
+### 8.5 – Configuration de `ossec.conf` et redémarrage
+
+Le bloc `<integration>` suivant est ajouté à `/var/ossec/etc/ossec.conf` :
+
+```xml
+<integration>
+    <name>custom-w2thive</name>
+    <hook_url>http://192.168.9.133:9000</hook_url>
+    <api_key>RBs/Vy74wtHEi+R5zLsSLFAG15CUbVRS</api_key>
+    <rule_id>5763</rule_id>
+    <alert_format>json</alert_format>
+</integration>
+```
+
+![Bloc <integration> dans ossec.conf](thehive+shuffle/c11.png)
+
+Le service `wazuh-manager` est ensuite redémarré pour prendre en compte le nouveau connecteur :
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+![Édition de ossec.conf et redémarrage de wazuh-manager](thehive+shuffle/c10.png)
+
+### 8.6 – Statut
+
+✅ Organisation/utilisateur TheHive dédiés créés, clé API générée.
+✅ Connecteur `wazuh2thehive` installé et câblé (dépendances, permissions, `ossec.conf`, service redémarré).
+⏳ Test de bout en bout (déclenchement Rule 5763 → apparition effective d'un cas dans TheHive) — à documenter séparément une fois vérifié.
 
 ---
 
