@@ -24,9 +24,37 @@ automated detection → containment → case-management pipeline so that:
    record-keeping.
 4. The analyst is notified by **email** the moment the block happens.
 
+> **Architecture note:** the original design considered blocking the
+> attacker at the network edge (OPNsense firewall alias). The pipeline that
+> was actually built and fully tested blocks the attacker's IP directly on
+> the targeted host via **Wazuh's native Active Response**
+> (`firewall-drop0` / `iptables`). This was proven end-to-end (detection →
+> block → verified loss of connectivity from the attacker). OPNsense-level
+> blocking is documented as a **future enhancement** in Section 10, rather
+> than described here as implemented.
 
+### High-level flow
 
-### High-level flow (as implemented)
+```mermaid
+flowchart TD
+    A["1. Wazuh detects the brute-force pattern<br/>in near real time"]
+    B["2. Shuffle (SOAR) receives the alert,<br/>validates it, and automatically blocks<br/>the attacker's IP at the target host"]
+    C["3. TheHive turns the qualifying alert into<br/>a case-management ticket — the analyst<br/>reviews, documents, and formally closes<br/>the incident"]
+    D["4. The analyst is notified by email<br/>the moment the block happens"]
+
+    A --> B
+    B --> C
+    B --> D
+```
+
+Automation (steps 1–2 and 4) handles containment speed; the analyst (step
+3) still handles judgment and record-keeping — the goal is fast, reliable
+first response, not removing the human from the loop entirely.
+
+### Detailed implementation flow
+
+The diagram above shows the narrative; the flow actually implemented maps
+each step onto specific components as follows:
 
 ```
 Kali (attacker) --hydra--> Target host (SSH)
