@@ -550,8 +550,3 @@ incident with no manual intervention required for containment:
   attacker IP, target host, and rule details — confirmed delivered three
   separate ways.
 
-The most valuable lessons from this phase were not architectural but
-operational: verifying that "the API returned success" is not the same as
-"the action actually happened," and that filter/condition logic in a SOAR
-tool must be explicitly enforced on the workflow path, not assumed from a
-node's internal output.
