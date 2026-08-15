@@ -1,6 +1,8 @@
 # Phase B — Automated Brute-Force Detection, Blocking & Case Management
 
-
+**Author:** Ahmed
+**Lab environment:** Home SOC Lab
+**Date:** August 2026
 
 ---
 
@@ -22,6 +24,14 @@ automated detection → containment → case-management pipeline so that:
    record-keeping.
 4. The analyst is notified by **email** the moment the block happens.
 
+> **Architecture note:** the original design considered blocking the
+> attacker at the network edge (OPNsense firewall alias). The pipeline that
+> was actually built and fully tested blocks the attacker's IP directly on
+> the targeted host via **Wazuh's native Active Response**
+> (`firewall-drop0` / `iptables`). This was proven end-to-end (detection →
+> block → verified loss of connectivity from the attacker). OPNsense-level
+> blocking is documented as a **future enhancement** in Section 10, rather
+> than described here as implemented.
 
 ### High-level flow (as implemented)
 
@@ -77,7 +87,7 @@ Required credentials/keys generated during this phase:
   can push matching alerts into TheHive automatically. Wazuh's integration
   is scoped to only forward alerts matching `rule_id 5763` — this is what
   keeps TheHive's Alerts queue limited to genuine brute-force detections
-  instead of every log line the manager processes (see Section 6.1).
+  instead of every log line the manager processes.
 
 ---
 
@@ -103,20 +113,10 @@ logic must not assume the attacker only tries invalid usernames.
 The custom rule that was authored during initial testing (kept for
 reference / defense-in-depth) is shown below:
 
-![Custom brute-force rule XML](images/cap21.png) <br>
+![Custom brute-force rule XML](images/01-custom-brute-force-rule.png)
 *Custom Wazuh rule (id 5764) chained to sid 5710, MITRE T1110 tagged.*
 
-### 3.2 Verifying detections in the Wazuh dashboard
-
-Both the noisy per-attempt alert (`5760`, level 5) and the aggregate
-brute-force alert (`5763`, level 10) were confirmed firing correctly for
-the same `hydra` session:
-
-![Wazuh dashboard rule IDs](images/03-wazuh-dashboard-rule-ids.png) <br>
-*Wazuh dashboard confirming rule 5763 fires as the aggregate brute-force
-detection, distinct from the noisy per-attempt rule 5760.*
-
-### 3.3 Webhook to Shuffle
+### 3.2 Webhook to Shuffle
 
 A Wazuh **Integrator/webhook** trigger was configured in Shuffle
 (Environment: `onprem`) to receive every alert Wazuh generates. Filtering
@@ -127,7 +127,9 @@ down to only the relevant alert type happens downstream in Shuffle
 
 ## 4. Shuffle Workflow Creation
 
-Workflow name: **`Wazuh_integration`**
+Workflow name: **`Wazuh_integration`**. This section documents how each
+node was built and configured. Proof that the finished pipeline actually
+works end-to-end is covered separately in Section 6.
 
 ### 4.1 Webhook trigger → LogFromWauh
 
@@ -139,11 +141,9 @@ use by downstream nodes.
 ### 4.2 Filter node
 
 A **Shuffle Tools → "Filter list"** action checks the incoming alert's
-`rule_id` field. Alerts that are not `5763` are marked `invalid` and would
-be discarded — but note this alone does **not** stop the workflow (see
-4.3).
+`rule_id` field.
 
-![Shuffle Filter node configuration](images/04-shuffle-filter-node.png) <br>
+![Shuffle Filter node configuration](images/04-shuffle-filter-node.png)
 *Filter list action: input `[$exec]`, field `rule_id`.*
 
 ### 4.3 Condition gate on the connection
@@ -153,19 +153,9 @@ workflow execution by itself — Shuffle still passes execution to the next
 node regardless of the filter's verdict. The actual gate has to live on the
 **connection line** between nodes:
 
-![Condition editor](images/cap10.png) <br>
+![Condition editor](images/cap10.png)
 *Condition editor placed directly on the connection line from `Filter` →
 `Wazuh Api Key`: `$exec.rule_id equals 5763`.*
-
-This gate was verified working against real traffic. Below is an alert
-that was correctly **rejected** — `rule_id 40112` ("Multiple authentication
-failures followed by a success"), a related but different Wazuh rule that
-must **not** trigger a block:
-
-![Filter correctly rejecting a non-brute-force alert](images/cap11.png) <br>
-*`LogFromWauh` captured `rule_id: "40112"`; `Filter` result shows
-`valid: [] 0 items`, `invalid: [...] 1 item` — execution correctly halts
-here and never reaches the block action.*
 
 ### 4.4 Fetch a Wazuh API token
 
@@ -173,12 +163,12 @@ An **Http** app node (`Wazuh Api Key`, method `GET`, using `curl` syntax)
 authenticates against the Wazuh manager API and retrieves a short-lived
 JWT:
 
-![Wazuh Api Key curl node](images/cap13.png) <br>
+![Wazuh Api Key curl node](images/cap13.png)
 *Curl-based Http node authenticating to the Wazuh REST API, using the
 manager's real IP instead of `localhost` (Shuffle cannot resolve
 `localhost` from its own container context).*
 
-![Wazuh Api Key curl node, formatted](images/cap14.png) <br>
+![Wazuh Api Key curl node, formatted](images/cap14.png)
 *Same statement, reformatted across multiple lines for readability —
 functionally identical.*
 
@@ -199,26 +189,23 @@ curl -k -u 'wazuh:<password>' \
 
 A plain **Http** app node performs a `PUT` request against Wazuh's
 `active-response` REST endpoint. Each field was verified individually via
-Shuffle's Autocomplete preview before saving:
+Shuffle's Autocomplete panel while building the node:
 
-**URL**, resolved against a real execution (`agents_list=006`):
+**URL:**
 
-![Active-response URL resolved](images/cap9.png) <br>
-*`https://192.168.9.133:55000/active-response?agents_list=$exec.all_fields.agent.id`
-correctly resolves the target agent ID from the live alert.*
+![Active-response URL field](images/cap9.png)
+*`https://192.168.9.133:55000/active-response?agents_list=$exec.all_fields.agent.id`*
 
-**Headers**:
+**Headers:**
 
-![Active-response headers](images/ca7.png) <br>
+![Active-response headers](images/ca7.png)
 *`Authorization=Bearer $wazuh_api_key.body` and
 `Content-Type=application/json`.*
 
-**Body**, resolved against a real execution:
+**Body:**
 
-![Active-response body JSON](images/cap8.png) <br>
-*`{"command":"firewall-drop0","alert":{"data":{"srcip":"$exec.all_fields.data.srcip"}}}` —
-the JSON autocompletion tree confirms the structure resolves correctly
-before saving.*
+![Active-response body JSON](images/cap8.png)
+*`{"command":"firewall-drop0","alert":{"data":{"srcip":"$exec.all_fields.data.srcip"}}}`*
 
 **Ssl verify:** `False` (the Wazuh manager uses a self-signed certificate).
 
@@ -229,7 +216,7 @@ generic `arguments`/`extra_args` array. An early version of this body used
 accepted (HTTP 200) but the agent-side script rejected with
 `Cannot read 'srcip' from data`, silently failing to block anything despite
 the API reporting success. This was only caught by reviewing
-`/var/ossec/logs/active-responses.log` on the target host.
+`/var/ossec/logs/active-responses.log` on the target host — see Section 6.
 
 ### 4.6 Email notification
 
@@ -240,7 +227,7 @@ node.
 > depends on the personal API key found under Shuffle's own account
 > Settings page:
 >
-> ![Shuffle account API key settings](images/cap6.png) <br>
+> ![Shuffle account API key settings](images/cap6.png)
 >
 > It returned `404 page not found` regardless of the key, because that
 > action calls Shuffle's hosted cloud relay (`shuffler.io`), which the
@@ -249,7 +236,7 @@ node.
 
 **SMTP configuration:**
 
-![SMTP email node configuration](images/cap3.png) <br>
+![SMTP email node configuration](images/cap3.png)
 *`smtp.gmail.com`, port `587`, username and recipient set to the SOC
 analyst's Gmail address.*
 
@@ -257,57 +244,122 @@ Gmail rejects plain-password SMTP logins for third-party senders
 (`530 5.7.0 Authentication Required`), so a Gmail **App Password** was
 generated instead of using the normal account password:
 
-![Generated Gmail App Password](images/cap2.png) <br>
+![Generated Gmail App Password](images/cap2.png)
 *Google Account → Security → App Passwords → generate a 16-character
 password, used in the SMTP node's Password field instead of the normal
 login password.*
 
-**Subject** and **Body**, both verified resolving real data before saving:
+**Subject** and **Body** were built using variables from `LogFromWauh`:
 
-![Subject field resolved](images/cap4.png) <br>
-*`🚨 SSH Brute Force Blocked - $logfromwauh.all_fields.data.srcip` resolves
-to the real attacker IP `192.168.163.164`.*
+```
+Subject: 🚨 SSH Brute Force Blocked - $logfromwauh.all_fields.data.srcip
 
-![Body field resolved](images/cap5.png) <br>
-*Body correctly resolving attacker IP, target agent (`node1`, id `006`),
-rule ID, alert title, and timestamp from the live alert.*
+Body:
+A brute-force SSH attack was detected and automatically blocked.
 
-**Confirmed delivery**, straight from the node's own execution result:
+Attacker IP: $logfromwauh.all_fields.data.srcip
+Target Agent: $logfromwauh.all_fields.agent.name ($logfromwauh.all_fields.agent.id)
+Rule ID: $logfromwauh.rule_id
+Alert: $logfromwauh.title
+Time: $logfromwauh.timestamp
 
-![Email node result — success](images/cap1.png) <br>
-*`"success": true`, `"reason": "Email sent to ahmedargoubi13@gmail.com!"`.*
+Action taken: IP blocked via Wazuh active-response (firewall-drop0).
+```
 
 ### 4.7 Final workflow canvas
 
-![Final Shuffle workflow canvas](images/cap16.png) <br>
+![Final Shuffle workflow canvas](images/cap16.png)
 *End-to-end chain: Webhook → LogFromWauh → Filter/condition gate → Wazuh
 Api Key → Active-response block → Email.*
 
-### 4.8 Execution history
-
-![Workflow run history — repeated successes](images/cap15.png) <br>
-*Multiple consecutive `SUCCESS` executions in Shuffle's run history,
-confirming the pipeline is stable across repeated triggers, not a one-off
-result.*
-
 ---
 
-## 5. Testing the Workflow
+## 5. Attack Simulation
 
-### 5.1 Simulating the attack from Kali
+With the detection rule and the full Shuffle workflow in place, a real
+brute-force attack was launched from Kali against the target host to
+trigger the entire pipeline under real conditions — not a manual test run.
 
 ```bash
 hydra -L users.txt -P password.txt ssh://192.168.8.127
 ```
 
-This successfully found a valid credential pair (`ansible:ahmed`),
-confirming the target was genuinely vulnerable to brute-force before
-containment was applied.
+```
+Hydra v9.7 (c) 2023 by van Hauser/THC & David Maciejak
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2026-08-14 06:13:03
+[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4
+[DATA] max 14 tasks per 1 server, overall 14 tasks, 14 login tries (l:1/p:14), ~1 try per task
+[DATA] attacking ssh://192.168.8.127:22/
+[22][ssh] host: 192.168.8.127   login: ansible   password: ahmed
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2026-08-14 06:13:18
+```
 
-### 5.2 Verifying the block
+Two things are worth noting about this run:
 
-After the workflow executed, the target host's firewall rules were
-inspected directly:
+- Hydra found a **valid password for a real account** (`ansible`), not a
+  non-existent username. This confirms the earlier decision in Section 3.1
+  to trigger on Wazuh's built-in rule `5763` rather than the custom
+  non-existent-username rule — a username-existence-based rule would have
+  missed this exact attack.
+- The attack ran fast enough (14 parallel tasks) to comfortably exceed the
+  rule's frequency threshold (3 failures within 60 seconds), which is what
+  actually causes rule `5763` to fire as an aggregate detection rather than
+  only the noisier per-attempt rule `5760`.
+
+At this point, before any response has happened, the target is still fully
+reachable from Kali — this is confirmed as the "before" state in the next
+section.
+
+---
+
+## 6. Validation — Wazuh & Shuffle
+
+This section proves the detection and containment side of the pipeline
+actually worked, not just that it was configured correctly.
+
+### 6.1 Wazuh fired the correct rule
+
+![Wazuh dashboard rule IDs](images/03-wazuh-dashboard-rule-ids.png)
+*Wazuh dashboard confirming rule `5763` (level 10, aggregate brute-force)
+fired alongside the noisier per-attempt rule `5760` for the same hydra
+session.*
+
+### 6.2 The Shuffle gate correctly separates real detections from noise
+
+A real `5763` alert was captured passing every stage of the workflow:
+
+![5763 alert passing the filter](images/06-shuffle-5763-alert-passed-filter.png)
+*Real alert data: `agent.id = "006"`, `data.srcip = "192.168.163.164"`,
+Filter result `valid: 1 item`.*
+
+And, just as important, a related-but-different alert (`rule_id 40112`,
+"Multiple authentication failures followed by a success") was correctly
+**rejected** at the same gate:
+
+![Filter correctly rejecting a non-brute-force alert](images/cap11.png)
+*`Filter` result shows `valid: [] 0 items`, `invalid: [...] 1 item` —
+execution correctly halts here and never reaches the block action.*
+
+Without this second check, there would be no way to know whether the gate
+was actually filtering anything, or just happening to always match.
+
+### 6.3 The active-response command executed cleanly on the target
+
+```
+2026/08/14 08:00:36 active-response/bin/firewall-drop: Starting
+2026/08/14 08:00:36 active-response/bin/firewall-drop:
+  {"command":"add","parameters":{"alert":{"data":{"srcip":"192.168.163.164"}}}}
+2026/08/14 08:00:36 active-response/bin/firewall-drop:
+  {"command":"check_keys","parameters":{"keys":["192.168.163.164"]}}
+2026/08/14 08:00:36 active-response/bin/firewall-drop:
+  {"command":"continue", ...}
+```
+
+No `Cannot read 'srcip' from data` error this time — confirming the Body
+fix described in Section 4.5.
+
+### 6.4 The block is actually present in iptables
 
 ```bash
 sudo iptables -L -n -v
@@ -322,43 +374,69 @@ Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
     0     0 DROP       all  --  *      *       192.168.163.164      0.0.0.0/0
 ```
 
-And the active-response log confirmed a clean execution with no errors:
+### 6.5 The attacker can no longer reach the target
 
-```
-2026/08/14 08:00:36 active-response/bin/firewall-drop: Starting
-2026/08/14 08:00:36 active-response/bin/firewall-drop:
-  {"command":"add","parameters":{"alert":{"data":{"srcip":"192.168.163.164"}}}}
-2026/08/14 08:00:36 active-response/bin/firewall-drop:
-  {"command":"check_keys","parameters":{"keys":["192.168.163.164"]}}
-2026/08/14 08:00:36 active-response/bin/firewall-drop:
-  {"command":"continue", ...}
-```
+This is the real-world proof that matters: after the automated response,
+the attacker's own machine loses connectivity to the target it was just
+attacking.
 
-Finally, from Kali itself, connectivity was confirmed lost:
+![Kali hydra attack and blocked ping](images/10-kali-hydra-attack-and-blocked-ping.png)
+*Top: hydra successfully brute-forces a valid credential (same attack as
+Section 5). Bottom: immediately after, `ping 192.168.8.127` from Kali
+returns **100% packet loss** — the attacker's own IP is now blocked by the
+automated response, with zero manual intervention.*
 
-![Kali hydra attack and blocked ping](images/10-kali-hydra-attack-and-blocked-ping.png) <br>
-*Top: hydra successfully brute-forces a valid credential. Bottom: after the
-automated block, `ping` to the target shows 100% packet loss — the
-attacker's own IP is now blocked.*
+### 6.6 Repeated executions confirm stability
 
-### 5.3 Confirming a real 5763 alert clears the gate
-
-![5763 alert passing the filter](images/06-shuffle-5763-alert-passed-filter.png) <br>
-*Real alert data: `agent.id = "006"`, `data.srcip = "192.168.163.164"`,
-Filter result `valid: 1 item` — this is the counterpart to the rejected
-`rule_id 40112` example in Section 4.3, confirming the gate correctly
-distinguishes real brute-force alerts from related-but-irrelevant ones.*
+![Workflow run history — repeated successes](images/cap15.png)
+*Multiple consecutive `SUCCESS` executions in Shuffle's run history,
+confirming the pipeline is stable across repeated triggers, not a one-off
+result.*
 
 ---
 
-## 6. Case Management in TheHive
+## 7. Validation — Email
+
+Delivery of the SOC notification email was confirmed three separate ways.
+
+**1. The node's own execution result:**
+
+![Email node result — success](images/cap1.png)
+*`"success": true`, `"reason": "Email sent to ahmedargoubi13@gmail.com!"`.*
+
+**2. The variables actually resolved correctly before sending** — checked
+via Shuffle's Autocomplete preview against a real prior execution:
+
+![Subject field resolved](images/cap4.png)
+*Subject resolves to the real attacker IP: `🚨 SSH Brute Force Blocked -
+192.168.163.164`.*
+
+![Body field resolved](images/cap5.png)
+*Body correctly resolving attacker IP, target agent (`node1`, id `006`),
+rule ID, alert title, and timestamp from the live alert.*
+
+**3. The email actually arrived, with all data correct, in the analyst's
+real inbox:**
+
+![Email received in inbox](images/20-email-inbox-received.png)
+*Gmail inbox showing the alert, subject line correctly populated with the
+real attacker IP.*
+
+![Email opened — full body](images/21-email-opened-full.png)
+*Full email body confirming every variable resolved with real data:
+attacker IP `192.168.163.164`, target agent `node1 (006)`, rule ID `5763`,
+alert title, timestamp, and the action taken.*
+
+---
+
+## 8. Case Management in TheHive
 
 Detection and containment are automated, but a human analyst is still
 responsible for reviewing, documenting, and formally closing every
 incident. This section covers what happens once an alert lands in
 TheHive.
 
-### 6.1 How alerts reach TheHive
+### 8.1 How alerts reach TheHive
 
 Wazuh is configured to forward matching alerts directly into TheHive,
 scoped specifically to `rule_id 5763` so that only genuine brute-force
@@ -367,17 +445,17 @@ fills with unrelated internal log noise (an early misconfiguration flooded
 TheHive with 331 irrelevant "Docker: Error message" alerts from a
 completely different rule before the scope restriction was added).
 
-![TheHive alert received](images/11-thehive-alert-received.png) <br>
+![TheHive alert received](images/11-thehive-alert-received.png)
 *Only rule 5763 alerts arrive after scoping — one alert, correctly tagged
 `agent_id=006`, `agent_ip=192.168.8.127`, `agent_name=node1`, `rule=5763`.*
 
-### 6.2 Reviewing the alert before promoting it
+### 8.2 Reviewing the alert before promoting it
 
 Before turning an alert into a case, the analyst reviews what Wazuh
 actually sent. TheHive automatically maps the raw alert into a structured
 table on the alert's **General** tab:
 
-![Alert general tab — rule mapping](images/12-thehive-alert-details-rule-mapping.png) <br>
+![Alert general tab — rule mapping](images/12-thehive-alert-details-rule-mapping.png)
 *Full rule metadata surfaced automatically: `rule.level = 10`,
 `rule.description`, `rule.id = 5763`, and — critically —
 `rule.mitre.id = ['T1110']`, `rule.mitre.tactic = ['Credential Access']`,
@@ -388,7 +466,7 @@ context without needing to look anything up manually.*
 The alert's **Observables** tab lists every indicator Wazuh's alert
 contained, automatically extracted and classified by data type:
 
-![Alert observables](images/13-thehive-alert-observables.png) <br>
+![Alert observables](images/13-thehive-alert-observables.png)
 *10 observables — the attacker IP `192.168.163.164`, represented in
 several formats/contexts extracted from the raw alert. All inherit
 `TLP:AMBER` / `PAP:AMBER` by default from the alert's classification.*
@@ -407,26 +485,26 @@ At this stage the alert also carries a default classification:
   observe, not act, which no longer applied once containment already
   happened automatically.
 
-### 6.3 Promoting the alert to a case
+### 8.3 Promoting the alert to a case
 
 Every alert in TheHive is a raw notification; a **Case** is what an
 analyst actually works. The alert is promoted via **Create Case**:
 
-![Create case chooser](images/14-thehive-create-case.png) <br>
+![Create case chooser](images/14-thehive-create-case.png)
 *"Empty case" was chosen over "From template" — no reusable brute-force
-response template existed yet at this stage of the lab (see Section 8 for
+response template existed yet at this stage of the lab (see Section 10 for
 a planned improvement here). "Empty case" still inherits the alert's
 title, description, severity, tags, and observables automatically.*
 
 The resulting case is automatically linked back to its originating alert,
 and both records stay associated:
 
-![Case created and linked to the alert](images/15-thehive-case-created.png) <br>
+![Case created and linked to the alert](images/15-thehive-case-created.png)
 *Case #1 created — severity Medium (inherited), 2 observables carried
 over, 1 linked alert, tags preserved (`agent_id`, `agent_ip`,
 `agent_name`, `rule`).*
 
-### 6.4 Building the analyst task checklist
+### 8.4 Building the analyst task checklist
 
 A working case in TheHive is driven by **Tasks** — the actual
 investigation checklist an analyst works through, each independently
@@ -452,19 +530,19 @@ supports assignment, mandatory-log enforcement (forces at least one
 activity log entry before a task can be marked complete — useful for
 audit trails), flagging, and due dates:
 
-![Tasks list — all three initially Waiting](images/16-thehive-case-tasks-list.png) <br>
+![Tasks list — all initially Waiting](images/16-thehive-case-tasks-list.png)
 *Tasks start in `Waiting` status the moment they're created — creating a
 task does not, by itself, mean anything has been verified yet.*
 
-### 6.5 Working and completing tasks
+### 8.5 Working and completing tasks
 
 Each task was independently verified against the real environment before
 being marked complete — for example, Task 1 was confirmed against the
-actual `iptables` output already captured in Section 5.2, and Task 4 was
-confirmed against the actual email shown in Section 4.6. Marking a task
+actual `iptables` output already captured in Section 6.4, and Task 4 was
+confirmed against the actual email shown in Section 7. Marking a task
 complete records the outcome directly on the task itself:
 
-![SOC notification task — Completed](images/18-thehive-task-completed.png) <br>
+![SOC notification task — Completed](images/18-thehive-task-completed.png)
 *"Confirm SOC notification delivered" task, status `Completed`, assignee
 `ahmed`, with its description preserved as the audit record of what was
 being verified.*
@@ -474,14 +552,14 @@ containment happened in seconds), but the **case record** is what proves,
 after the fact, that each assumption behind the automated response was
 actually checked by a human — not just that the block fired successfully.
 
-### 6.6 Documenting the case
+### 8.6 Documenting the case
 
 Once the investigative tasks are underway, the case's **General** tab
 carries the full narrative summary an incoming analyst (or an auditor)
 would need, without having to reconstruct it from the raw alert or the
 Shuffle execution logs:
 
-![Case description — full incident summary](images/17-thehive-case-description.png) <br>
+![Case description — full incident summary](images/17-thehive-case-description.png)
 
 > Automated detection and response executed successfully via Wazuh +
 > Shuffle SOAR pipeline.
@@ -503,7 +581,7 @@ Shuffle execution logs:
 >
 > **Classification:** True Positive — automated containment successful.
 
-### 6.7 Closing the case
+### 8.7 Closing the case
 
 Once every task is marked `Completed`, the case status is changed from
 `New`/`In Progress` to **Closed**, with a resolution type of
@@ -514,7 +592,7 @@ and signed off on it inside TheHive's audit trail.
 
 ---
 
-## 7. Lessons Learned / Troubleshooting Summary
+## 9. Lessons Learned / Troubleshooting Summary
 
 | Issue | Root cause | Fix |
 |---|---|---|
@@ -529,7 +607,7 @@ and signed off on it inside TheHive's audit trail.
 
 ---
 
-## 8. Future Enhancements
+## 10. Future Enhancements
 
 - **OPNsense-level blocking**: extend the workflow to also add the
   attacker's IP to an OPNsense firewall alias, blocking at the network
@@ -542,14 +620,14 @@ and signed off on it inside TheHive's audit trail.
   workflow.
 - **Case templates**: build a reusable TheHive case template
   ("SSH Brute Force Response") pre-populated with the standard 5-task
-  checklist used in Section 6.4, instead of adding tasks manually each
+  checklist used in Section 8.4, instead of adding tasks manually each
   time an alert is promoted.
 - **Multi-service coverage**: extend detection beyond SSH to RDP and FTP
   brute-force patterns, as originally scoped.
 
 ---
 
-## 9. Conclusion
+## 11. Conclusion
 
 This phase delivered a working, tested automation pipeline that takes a
 brute-force SSH attack from first detection to a fully documented, closed
@@ -559,15 +637,15 @@ incident with no manual intervention required for containment:
   built-in aggregate rule (`5763`), validated against a real attack using
   valid-but-guessed credentials.
 - **Containment:** Shuffle automatically blocks the attacker's IP on the
-  target host within seconds of detection, verified via `iptables` and the
-  active-response logs.
+  target host within seconds of detection, verified via `iptables`, the
+  active-response logs, and a real loss of connectivity from the attacker.
 - **Case management:** Every qualifying alert is automatically pushed into
   TheHive as a case-ready alert, complete with MITRE ATT&CK mapping,
   observables, and TLP/PAP classification, and turned into a fully
   task-tracked, documented, and formally closed case.
 - **Notification:** The SOC analyst is emailed immediately with the
-  attacker IP, target host, and rule details — confirmed delivered and
-  verified against the node's own execution result.
+  attacker IP, target host, and rule details — confirmed delivered three
+  separate ways.
 
 The most valuable lessons from this phase were not architectural but
 operational: verifying that "the API returned success" is not the same as
