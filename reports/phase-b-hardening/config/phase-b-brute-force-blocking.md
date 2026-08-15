@@ -299,33 +299,9 @@ A real `5763` alert was captured passing every stage of the workflow:
 *Real alert data: `agent.id = "006"`, `data.srcip = "192.168.163.164"`,
 Filter result `valid: 1 item`.*
 
-And, just as important, a related-but-different alert (`rule_id 40112`,
-"Multiple authentication failures followed by a success") was correctly
-**rejected** at the same gate:
 
-![Filter correctly rejecting a non-brute-force alert](images/cap11.png) <br>
-*`Filter` result shows `valid: [] 0 items`, `invalid: [...] 1 item` —
-execution correctly halts here and never reaches the block action.*
 
-Without this second check, there would be no way to know whether the gate
-was actually filtering anything, or just happening to always match.
-
-### 6.3 The active-response command executed cleanly on the target
-
-```
-2026/08/14 08:00:36 active-response/bin/firewall-drop: Starting
-2026/08/14 08:00:36 active-response/bin/firewall-drop:
-  {"command":"add","parameters":{"alert":{"data":{"srcip":"192.168.163.164"}}}}
-2026/08/14 08:00:36 active-response/bin/firewall-drop:
-  {"command":"check_keys","parameters":{"keys":["192.168.163.164"]}}
-2026/08/14 08:00:36 active-response/bin/firewall-drop:
-  {"command":"continue", ...}
-```
-
-No `Cannot read 'srcip' from data` error this time — confirming the Body
-fix described in Section 4.5.
-
-### 6.4 The block is actually present in iptables
+### 6.3 The block is actually present in iptables
 
 ```bash
 sudo iptables -L -n -v
@@ -340,7 +316,7 @@ Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
     0     0 DROP       all  --  *      *       192.168.163.164      0.0.0.0/0
 ```
 
-### 6.5 The attacker can no longer reach the target
+### 6.4 The attacker can no longer reach the target
 
 This is the real-world proof that matters: after the automated response,
 the attacker's own machine loses connectivity to the target it was just
@@ -352,7 +328,7 @@ Section 5). Bottom: immediately after, `ping 192.168.8.127` from Kali
 returns **100% packet loss** — the attacker's own IP is now blocked by the
 automated response, with zero manual intervention.*
 
-### 6.6 Repeated executions confirm stability
+### 6.5 Repeated executions confirm stability
 
 ![Workflow run history — repeated successes](images/cap15.png)  <br>
 *Multiple consecutive `SUCCESS` executions in Shuffle's run history,
