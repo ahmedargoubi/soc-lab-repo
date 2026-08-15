@@ -286,7 +286,7 @@ actually worked, not just that it was configured correctly.
 
 ### 6.1 Wazuh fired the correct rule
 
-![Wazuh dashboard rule IDs](images/03-wazuh-dashboard-rule-ids.png) <br>
+![Wazuh dashboard rule IDs](images/3-wazuh-dashboard-rule-ids.png) <br>
 *Wazuh dashboard confirming rule `5763` (level 10, aggregate brute-force)
 fired alongside the noisier per-attempt rule `5760` for the same hydra
 session.*
