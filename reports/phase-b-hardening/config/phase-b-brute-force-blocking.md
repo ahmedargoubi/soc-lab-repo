@@ -1,9 +1,5 @@
 # Phase B — Automated Brute-Force Detection, Blocking & Case Management
 
-**Author:** Ahmed
-**Lab environment:** Home SOC Lab
-**Date:** August 2026
-
 ---
 
 ## 1. Introduction
