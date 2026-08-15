@@ -15,18 +15,18 @@ SIEM cannot reliably catch and respond to these attempts fast enough —
 especially outside working hours. The goal of this phase was to build a fully
 automated detection → containment → case-management pipeline so that:
 
-1. **Wazuh** detects the brute-force pattern in near real time.
-![Custom brute-force rule XML](images/wazuh.png) <br>
+1. **Wazuh** detects the brute-force pattern in near real time.  <br>
+![Custom brute-force rule XML](images/wazuh.png)
 
 2. **Shuffle** (SOAR) receives the alert, validates it, and automatically
-   blocks the attacker's IP at the target host.
+   blocks the attacker's IP at the target host.  <br>
 
 ![Custom brute-force rule XML](images/shuffle.png) <br>
 
 3. **TheHive** turns the qualifying alert into a case-management ticket, so a
    human analyst still reviews, documents, and formally closes the incident —
    automation handles containment speed, the analyst handles judgment and
-   record-keeping.
+   record-keeping. <br>
 ![Custom brute-force rule XML](images/thehive.png) <br>
    
 4. The analyst is notified by **email** the moment the block happens.
