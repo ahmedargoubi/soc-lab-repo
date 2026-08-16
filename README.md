@@ -18,26 +18,36 @@ Inspiré par des dépôts portfolio comme [Lab4PurpleSec](https://github.com/0xM
 
 ## 🎯 Objectif du projet
 
-Ce lab répond à une question simple : **qu'est-ce que change réellement,
-concrètement, quand on durcit un réseau et qu'on automatise la réponse à
-incident ?** Plutôt que de documenter des outils isolément, le projet
-rejoue les **mêmes 4 attaques** contre la **même infrastructure**, à trois
-moments différents de sa maturité :
+**La motivation première de ce projet est de concevoir et construire une
+architecture de sécurité d'entreprise réelle — segmentation, détection,
+threat intelligence, réponse automatisée, gestion de case — pas
+uniquement de "faire des simulations d'attaque".** Les 4 scénarios
+d'attaque ne sont pas le but du projet ; ce sont des **outils de
+validation** utilisés pour vérifier que l'architecture construite se
+comporte comme prévu, exactement comme un architecte sécurité en
+entreprise validerait une conception via des tests d'intrusion internes
+plutôt que de la déployer en confiance aveugle.
 
-1. **Phase A** mesure une baseline honnête, sans aucune protection
-   supplémentaire — segmentation réseau brute + détection Wazuh par
-   défaut.
-2. **Phase B** applique un durcissement progressif et documenté (MFA,
-   SOAR, case management, threat intel, WAF, durcissement AD) — chaque
-   mesure est testée individuellement, pas seulement supposée efficace.
-3. **Phase C** rejoue les 4 attaques de la Phase A contre le réseau
-   durci, et compare directement : temps de détection, efficacité de
-   segmentation, réussite/échec de chaque étape de la chaîne d'attaque,
-   maturité GRC (NIST CSF 2.0).
+Concrètement, le travail se déroule dans cet ordre :
 
-Chaque décision de conception — y compris les gaps volontaires — est
-documentée explicitement dans
-[`docs/security-principles.md`](docs/security-principles.md).
+1. **Construire** l'architecture (segmentation OPNsense, stack de
+   détection, threat intel, SOAR, case management) — c'est le cœur du
+   projet, documenté dans [`config/`](config/) et
+   [`docs/architecture-overview.md`](docs/architecture-overview.md).
+2. **Mesurer** son comportement réel avec des attaques reproductibles
+   (Phase A, sans durcissement, pour une baseline honnête).
+3. **Durcir** l'architecture de façon progressive et documentée (Phase B)
+   — chaque mesure de durcissement est justifiée par un principe de
+   conception explicite, voir
+   [`docs/security-principles.md`](docs/security-principles.md).
+4. **Revalider** avec les mêmes attaques (Phase C) pour mesurer
+   l'amélioration réelle plutôt que supposée.
+
+Les 5 rôles (Red Team, SOC Analyst, DFIR, CTI, GRC) ne sont donc pas des
+personæ séparées d'un exercice pédagogique isolé : ce sont les 5 angles
+sous lesquels **la même architecture** est construite, exploitée et
+évaluée — voir Section "Les 5 rôles simulés" pour le détail concret de ce
+que chaque rôle a réellement produit dans ce lab.
 
 ---
 
@@ -55,6 +65,16 @@ documentée explicitement dans
 | **Server_LAN** | Serveurs internes | AD-DC (Windows Server 2022 — domaine `PROJET.local`, hostname `TEKUP-DC`) |
 | **Legacy** | Machine volontairement vulnérable, non supervisée | Metasploitable2 |
 | **Attacker** | Poste d'attaque (NAT VMware) | Kali Linux |
+
+### Topologie complète
+
+**Phase A — Baseline :**
+
+![Phase A Topology](network/diagrams/phase-a-topology.png)
+
+**Phase B — Durcissement + Automatisation :**
+
+![Phase B Topology](network/diagrams/phase-b-topology.jpg)
 
 📄 Détails complets : [`docs/architecture-overview.md`](docs/architecture-overview.md) · [`docs/network-topology.md`](docs/network-topology.md)
 
@@ -83,18 +103,28 @@ documentée explicitement dans
 ## 🎭 Les 5 rôles simulés
 
 ```
-Red Team  →  SOC Analyst (Wazuh)  →  DFIR (Velociraptor)  →  CTI (MISP + MITRE ATT&CK)  →  GRC (NIST CSF 2.0)
+Red Team  →  SOC Analyst (Wazuh + TheHive)  →  DFIR (Velociraptor)  →  CTI (MITRE + MISP + VirusTotal)  →  GRC (NIST CSF 2.0)
 ```
 
-Chaque simulation d'attaque est rejouée à travers ces 5 angles d'analyse, produisant un rapport unique qui couvre l'attaque, la détection, l'investigation, le renseignement sur la menace et l'évaluation de conformité.
+Chaque simulation d'attaque est rejouée à travers ces 5 angles d'analyse. Ce ne sont pas des rôles séparés artificiellement : c'est la **même chaîne d'incident**, vue à chaque étape par l'outil/discipline correspondant.
 
-| Rôle | Ce qu'il fait concrètement dans ce lab |
-|---|---|
-| **Red Team** | Exécute l'attaque (Kali) — injection, exploitation, mouvement latéral, ransomware réel selon le scénario |
-| **SOC Analyst** | Analyse les alertes Wazuh générées, mesure le temps de détection (TTD), et — depuis la Phase B — supervise le pipeline SOAR (Shuffle) qui répond automatiquement aux alertes qualifiantes |
-| **DFIR** | Utilise Velociraptor pour la collecte forensique post-incident (artefacts, timeline, mémoire) |
-| **CTI** | Extrait les IOCs de l'attaque, les corrèle via MISP et VirusTotal, mappe la chaîne d'attaque sur MITRE ATT&CK |
-| **GRC** | Évalue la maturité de la réponse selon NIST CSF 2.0, documente les gaps de conception et les compromis assumés |
+### 🔴 Red Team
+Exécute l'attaque depuis Kali — injection SQL/commande (Sim 1), exploitation de backdoor (Sim 2), exécution de ransomware réel (Sim 3), LLMNR poisoning → Pass-the-Hash → BloodHound (Sim 4), brute force SSH via Hydra (Phase B).
+
+### 🔵 SOC Analyst — Wazuh + TheHive
+- **Détection (Wazuh)** : les alertes sont mesurées avec leur `rule.id` et `rule.level` réels — ex. rule `5763` (brute force SSH, niveau 10), rule `92652` (Pass-the-Hash), rules `554/553/550` (FIM, WannaCry). Le TTD (temps de détection) de chaque simulation est mesuré, pas estimé — voir [`phase-a-summary.md`](reports/phase-a-baseline/phase-a-summary.md), section 2.
+- **Triage et gestion de case (TheHive)** : chaque alerte qualifiante (Phase B) devient un case structuré — tags hérités de Wazuh, observables extraits automatiquement, classification TLP/PAP, checklist de tâches d'investigation, clôture formelle avec un statut de résolution (`TruePositive`, etc.). Voir [`phase-b-brute-force-blocking.md`](reports/phase-b-hardening/config/phase-b-brute-force-blocking.md), section Case Management.
+
+### 🟢 DFIR — Velociraptor
+Collecte forensique post-incident sur les hôtes compromis : artefacts, processus, timeline, mémoire. C'est la discipline qui répond à la question que Wazuh seul ne couvre pas — pas seulement *"une attaque a eu lieu"*, mais *"qu'est-ce que l'attaquant a fait exactement une fois dedans"*. Voir [`DFIR/velociraptor-dfir.md`](DFIR/velociraptor-dfir.md).
+
+### 🟡 CTI — MITRE ATT&CK (dans Wazuh) + MISP + VirusTotal
+- **Mapping MITRE ATT&CK directement dans les règles Wazuh** : chaque alerte qualifiante porte ses champs `rule.mitre.id` / `rule.mitre.tactic` / `rule.mitre.technique` — ex. `T1110` / `Credential Access` / `Brute Force` pour la rule `5763`, exploités tels quels par l'analyste sans recherche manuelle supplémentaire.
+- **MISP** : corrélation d'IOCs (hashs de fichiers via FIM) entre les alertes Wazuh et des indicateurs de menace connus — voir [`config/wazuh-misp-integration.md`](reports/phase-b-hardening/config/wazuh-misp-integration.md).
+- **VirusTotal** : enrichissement automatique des hashs/IOCs observés — voir [`config/virustotal-integration.md`](reports/phase-b-hardening/config/virustotal-integration.md).
+
+### ⚪ GRC — NIST CSF 2.0
+Évalue la maturité de la réponse à chaque phase, documente explicitement les gaps de conception assumés (ex. Legacy_LAN sans agent) et les compromis réels (ex. MFA non centralisé) plutôt que de les masquer — voir [`docs/security-principles.md`](docs/security-principles.md).
 
 ---
 
@@ -199,4 +229,10 @@ projet sont documentés dans
 
 ---
 
+## 🗺️ Roadmap
 
+Voir [`docs/roadmap.md`](docs/roadmap.md) pour le détail des trois phases et leur avancement.
+
+---
+
+*Projet en cours — Phase A (Baseline) terminée, Phase B (Durcissement) en cours.*
