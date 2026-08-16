@@ -48,23 +48,6 @@ filtrage fonctionne en **first-match** : la première règle qui correspond
 | **Server_LAN** | Infrastructure serveur interne | AD-DC / `TEKUP-DC` (Windows Server) — `192.168.7.139` |
 | **User_LAN** | Postes utilisateurs | Win10-Client (AHMED), Win10-Client (HAROUN) — `192.168.8.*` ; client CentOS (`node1`) — `192.168.8.127` |
 
-> ⚠️ **Point à clarifier :** ce schéma assigne `192.168.11.0/24` à DMZ_LAN
-> et `192.168.6.0/24` à Legacy_LAN — soit l'**inverse** de la table Phase A
-> actuellement documentée dans
-> [`network-topology.md`](network-topology.md) (`DMZ_LAN = .6.0/24`,
-> `Legacy_LAN = .11.0/24`). Cette inversion correspond exactement à
-> l'incohérence déjà relevée dans
-> [`opnsense-firewall-rules.md`](../network/opnsense-firewall-rules.md)
-> (section DMZ, IP `192.168.11.197`). Il est probable que ce schéma
-> reflète l'assignation **réelle/corrigée**, et que la table Phase A soit
-> celle à corriger rétroactivement — à confirmer avant de mettre à jour
-> `network-topology.md`.
->
-> Autre point à vérifier : le schéma affiche `192.168.8.0/24` comme
-> sous-réseau pour **Server_LAN** (dans l'encart) alors que l'IP de
-> l'AD-DC (`192.168.7.139`) suggère `192.168.7.0/24` — probablement une
-> coquille dans le libellé de l'encart plutôt qu'un vrai changement de
-> sous-réseau.
 
 ---
 
