@@ -155,11 +155,5 @@ Testé sur deux machines distinctes du domaine — une élévation de privilège
 ---
 
 
-## 8. Conclusion
 
-**Impact sur les failles de Phase A :**
-- La capture de hash NTLMv2 via LLMNR (Simulation 4) est désormais bloquée à la source (LLMNR + NBT-NS désactivés).
-- Le mouvement latéral par SMB non signé est atténué côté serveur (signature côté client à confirmer).
-- Le compte `haroun`, à l'origine de l'exploitation de la Simulation 3 (Defender désactivé via un compte sur-privilégié), n'est plus membre des groupes admin — corrige directement ce vecteur, sous réserve d'une capture de confirmation à produire.
-- L'exploitation de Defender désactivé sans confirmation (Simulation 3) est corrigée par le renforcement UAC — **à condition que la GPO `Disable Windows Defender` soit elle-même désactivée** (section 6), sans quoi la protection reste absente indépendamment de l'UAC.
 
