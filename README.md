@@ -2,17 +2,7 @@
 
 > Simulation d'un réseau d'entreprise segmenté, attaqué et défendu à travers 5 rôles de cybersécurité successifs (Red Team, SOC Analyst, DFIR, CTI, GRC) sur la même infrastructure virtualisée.
 
-Inspiré par des dépôts portfolio comme [Lab4PurpleSec](https://github.com/0xMR007/Lab4PurpleSec).
 
----
-
-## 📌 Statut du projet
-
-| Phase | Description | Statut |
-|---|---|---|
-| **Phase A — Baseline** | Attaques contre l'infrastructure telle que construite initialement, sans durcissement | ✅ Terminée (4/4 simulations + synthèse) |
-| **Phase B — Durcissement + Automatisation** | MFA, SOAR (Shuffle), case management (TheHive), WAF, intégrations threat intel, durcissement AD, règles Wazuh/Suricata personnalisées | 🟡 En cours |
-| **Phase C — Ré-attaque** | Rejeu des mêmes simulations contre le réseau durci, comparatif avant/après | ⏳ À venir |
 
 ---
 
