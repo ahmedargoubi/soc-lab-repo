@@ -100,10 +100,6 @@ composants : [`docs/architecture-overview.md`](architecture-overview.md).
 | **Server_LAN** | `192.168.7.0/24`* | AD-DC / `TEKUP-DC` — `192.168.7.139` |
 | **User_LAN** | `192.168.8.0/24` | Win10-Client (AHMED), Win10-Client (HAROUN) — `192.168.8.*` ; client CentOS (`node1`) — `192.168.8.127` |
 
-\* *Le schéma affiche `192.168.8.0/24` dans l'encart Server_LAN, ce qui
-entre en conflit avec l'IP réelle de l'AD-DC (`192.168.7.139`) —
-probablement une coquille de libellé plutôt qu'un changement de
-sous-réseau réel. À confirmer.*
 
 📄 Détail des règles de pare-feu post-durcissement :
 [`opnsense-firewall-rules-post-hardening.md`](../network/opnsense-firewall-rules-post-hardening.md)
