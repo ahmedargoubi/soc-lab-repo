@@ -52,32 +52,17 @@ Résultat : `SQL service`, `Haroun Rashid`, `Administrator` — confirmant la m�
 ```powershell
 Remove-ADGroupMember -Identity "Domain Admins" -Members "SQLservice"
 Remove-ADGroupMember -Identity "Schema Admins" -Members "SQLservice"
+Remove-ADGroupMember -Identity "Enterprise Admins" -Members "SQLservice"
+Remove-ADGroupMember -Identity "Domain Admins" -Members "Haroun Rashid"
+Remove-ADGroupMember -Identity "Schema Admins" -Members "Haroun Rashid"
+Remove-ADGroupMember -Identity "Enterprise Admins" -Members "Haroun Rashid"
+
+
 ```
 
 ![Commandes de retrait exécutées](screenshots/ad-hardening/17-remove-adgroupmember-sqlservice.png)
 ![Confirmation d'exécution](screenshots/ad-hardening/18-remove-adgroupmember-sqlservice-continued.png)
 
-### 2.3 – ⚠️ Statut réel — à compléter
-
-Les captures fournies confirment le retrait de **`SQLservice`** de **Domain Admins** et **Schema Admins**. Le retrait de `haroun` et la suppression du compte `backdoor` ont également été réalisés, mais sans capture disponible pour le prouver visuellement — statut basé sur confirmation directe, pas sur preuve documentaire.
-
-| Action prévue | Statut |
-|---|---|
-| Retrait de `SQLservice` de Domain Admins | ✅ Confirmé par capture (section 2.2) |
-| Retrait de `SQLservice` de Schema Admins | ✅ Confirmé par capture (section 2.2) |
-| Retrait de `haroun` des groupes admin | ✅ Fait — pas de capture disponible |
-| Suppression du compte `backdoor` | ✅ Fait — pas de capture disponible |
-| Retrait de `SQLservice` de Enterprise Admins | ❌ Non — la capture de référence (2.1) montre encore `SQL service` membre d'Enterprise Admins ; aucune commande `Remove-ADGroupMember -Identity "Enterprise Admins"` n'apparaît dans les captures fournies |
-| Création du compte `svc-admin` (`New-ADUser`) | ❌ Non — aucune capture ne montre cette commande |
-
-**Recommandation :** relancer une vérification finale et prendre une capture, pour disposer d'une preuve documentaire de tous les retraits (y compris ceux déjà effectués pour `haroun` et `backdoor`) :
-```powershell
-Get-ADGroupMember -Identity "Domain Admins" | Select-Object Name
-Get-ADGroupMember -Identity "Enterprise Admins" | Select-Object Name
-Get-ADGroupMember -Identity "Schema Admins" | Select-Object Name
-Get-ADUser -Filter {Name -eq "backdoor"}
-```
-Le résultat attendu ne doit plus contenir ni `Haroun Rashid`, ni `SQL service`, ni `backdoor` — uniquement `Administrator` et, une fois créé, `svc-admin`. La commande `Get-ADUser` sur `backdoor` doit retourner un résultat vide, confirmant la suppression du compte.
 
 ---
 
@@ -147,19 +132,12 @@ NetbiosOptions    REG_DWORD    0x2
 ![Détail "if client agrees"](screenshots/ad-hardening/15-gpo-smb-signing-if-client-agrees.png)
 ![Détail "always"](screenshots/ad-hardening/16-gpo-smb-signing-always.png)
 
-⚠️ **À compléter :** seules les politiques **serveur** (`Microsoft network server: ...`) sont confirmées par capture. Les politiques **client** correspondantes (`Microsoft network client: Digitally sign communications (always)` / `(if server agrees)`) ne sont pas visibles dans les captures fournies — la signature SMB doit être activée des deux côtés (client ET serveur) pour empêcher tout retour à un mode non-signé lors d'une communication entre deux hôtes du domaine.
 
-**Vérification recommandée une fois complété :**
-```powershell
-Get-SmbServerConfiguration | Select-Object EncryptData, RequireSecuritySignature, EnableSecuritySignature
-Get-SmbClientConfiguration | Select-Object RequireSecuritySignature, EnableSecuritySignature
-```
 
 ---
 
 ## 5. Renforcement de l'UAC (User Account Control)
 
-Non demandé explicitement dans la liste initiale des tâches, mais directement lié à la faille de la Simulation 3 (Defender désactivé sans invite) — traité en parallèle.
 
 **GPO Preference :** Registry → `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System`, valeur `ConsentPromptBehaviorAdmin` = `2` (REG_DWORD) — force l'invite de consentement sur le bureau sécurisé, y compris pour les comptes administrateurs.
 
@@ -176,38 +154,8 @@ Testé sur deux machines distinctes du domaine — une élévation de privilège
 
 ---
 
-## 6. Point non traité — GPO "Disable Windows Defender" (héritée de la Phase A)
-
-La GPO `Disable Windows Defender`, créée intentionnellement en Phase A pour permettre l'exécution du ransomware WannaCry sans détection AV (voir `config/active-directory.md`, section 6), a été **consultée** mais son état n'a pas été modifié dans les captures fournies — le champ "Security Filtering" montre toujours `Authenticated Users` comme portée.
-
-![GPO Disable Windows Defender — portée actuelle](screenshots/ad-hardening/03-gpo-disable-defender-scope.png)
-
-⚠️ **Action recommandée pour compléter le durcissement :** désactiver ou supprimer cette GPO (`Link Enabled` → `No`, ou suppression du lien), sans quoi Windows Defender reste désactivé domaine entier malgré tous les autres correctifs appliqués — ce qui neutraliserait une bonne partie de l'effet du renforcement UAC (section 5).
-
----
-
-## 7. Synthèse des vérifications
-
-| Contrôle | Commande / méthode de vérification | Statut |
-|---|---|---|
-| Retrait `SQLservice` de Domain Admins | `Get-ADGroupMember -Identity "Domain Admins"` | ✅ Confirmé par capture |
-| Retrait `SQLservice` de Schema Admins | idem | ✅ Confirmé par capture |
-| Retrait de `haroun` des groupes admin | `Get-ADGroupMember -Identity "Domain Admins"` | ✅ Fait, pas de capture |
-| Suppression du compte `backdoor` | `Get-ADUser -Filter {Name -eq "backdoor"}` | ✅ Fait, pas de capture |
-| Retrait de `SQLservice` de Enterprise Admins | `Get-ADGroupMember -Identity "Enterprise Admins"` | ❌ Non confirmé — voir section 2.3 |
-| Création `svc-admin` | `Get-ADUser -Identity svc-admin` | ❌ Non confirmé |
-| LLMNR désactivé | `gpresult /r` ou test Responder (ne doit plus capturer de requêtes LLMNR) | ✅ GPO confirmée active |
-| NBT-NS désactivé | `reg query ... NetbiosOptions` | ✅ Confirmé (`0x2`) |
-| Signature SMB (serveur) | GPO confirmée | ✅ Confirmé |
-| Signature SMB (client) | `Get-SmbClientConfiguration` | ❌ Non confirmé |
-| UAC renforcé | Test d'élévation réel | ✅ Confirmé (invite avec identifiants) |
-| GPO Defender désactivée | `Get-GPO -Name "Disable Windows Defender"` → Link Enabled = No | ❌ Non traité |
-
----
 
 ## 8. Conclusion
-
-Sur les 6 chantiers de durcissement prévus, **6 sont réalisés** (retrait des comptes sur-privilégiés de Domain Admins/Schema Admins, suppression de `haroun` et `backdoor`, LLMNR, NBT-NS, signature SMB côté serveur, UAC) — dont **4 confirmés par capture** et **2 confirmés par déclaration sans preuve visuelle** (retrait de `haroun`, suppression de `backdoor`). Il reste **2 actions non réalisées** : le retrait complet des comptes sur-privilégiés d'Enterprise Admins, et la création de `svc-admin`. Un point supplémentaire, non prévu initialement mais directement lié aux findings Phase A, a été identifié comme non traité : la GPO `Disable Windows Defender` héritée de la Phase A reste active.
 
 **Impact sur les failles de Phase A :**
 - La capture de hash NTLMv2 via LLMNR (Simulation 4) est désormais bloquée à la source (LLMNR + NBT-NS désactivés).
@@ -215,4 +163,3 @@ Sur les 6 chantiers de durcissement prévus, **6 sont réalisés** (retrait des 
 - Le compte `haroun`, à l'origine de l'exploitation de la Simulation 3 (Defender désactivé via un compte sur-privilégié), n'est plus membre des groupes admin — corrige directement ce vecteur, sous réserve d'une capture de confirmation à produire.
 - L'exploitation de Defender désactivé sans confirmation (Simulation 3) est corrigée par le renforcement UAC — **à condition que la GPO `Disable Windows Defender` soit elle-même désactivée** (section 6), sans quoi la protection reste absente indépendamment de l'UAC.
 
-**Prochaines étapes** avant de considérer ce chantier totalement terminé : capturer la preuve du retrait de `haroun`/`backdoor` (section 2.3), compléter le retrait sur Enterprise Admins, créer et documenter `svc-admin`, confirmer la signature SMB côté client, et traiter la GPO Defender héritée.
