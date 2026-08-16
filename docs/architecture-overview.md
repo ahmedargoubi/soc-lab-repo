@@ -15,6 +15,8 @@ Le lab entier tourne sur une seule machine physique (laptop), sous
 machines virtuelles rattachées à des `VMnet` dédiés, chacun mappé sur une
 interface réseau distincte d'OPNsense.
 
+![Architecture Phase B](screens/vmware.png)
+
 ---
 
 ## 2. Pare-feu central — OPNsense
