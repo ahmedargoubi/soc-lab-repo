@@ -123,7 +123,7 @@ Collecte forensique post-incident sur les hôtes compromis : artefacts, processu
 - **MISP** : corrélation d'IOCs (hashs de fichiers via FIM) entre les alertes Wazuh et des indicateurs de menace connus — voir [`config/wazuh-misp-integration.md`](reports/phase-b-hardening/config/wazuh-misp-integration.md).
 - **VirusTotal** : enrichissement automatique des hashs/IOCs observés — voir [`config/virustotal-integration.md`](reports/phase-b-hardening/config/virustotal-integration.md).
 
-### ⚪ GRC — NIST CSF 2.0
+### ⚪ GRC
 Évalue la maturité de la réponse à chaque phase, documente explicitement les gaps de conception assumés (ex. Legacy_LAN sans agent) et les compromis réels (ex. MFA non centralisé) plutôt que de les masquer — voir [`docs/security-principles.md`](docs/security-principles.md).
 
 ---
