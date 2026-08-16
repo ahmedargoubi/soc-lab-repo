@@ -72,6 +72,38 @@ que chaque rôle a réellement produit dans ce lab.
 
 ![Phase A Topology](network/diagrams/phase-a-topology.png)
 
+### Pourquoi commencer par la Phase A (baseline non durcie) ?
+
+Il aurait été plus rapide de construire l'architecture durcie directement
+et de la tester une seule fois. Ce n'est délibérément pas ce qui a été
+fait, pour trois raisons :
+
+1. **Sans mesure "avant", une amélioration ne peut pas être prouvée —
+   seulement supposée.** Affirmer que le SOAR "accélère la réponse" ou
+   que le WAF "bloque les attaques" n'a de valeur que si on peut le
+   comparer à un état sans ces protections. La Phase A donne ce point de
+   comparaison honnête : quatre attaques, sur l'infrastructure telle que
+   construite, sans aucune protection ajoutée.
+2. **Éviter le biais de confirmation.** En construisant l'architecture
+   durcie en premier, il devient facile de supposer qu'elle fonctionne
+   comme prévu sans jamais la challenger réellement. Attaquer d'abord la
+   version non protégée oblige à observer ce qui se passe réellement —
+   par exemple, le fait que la segmentation seule ne bloque pas un
+   Pass-the-Hash via un flux SMB légitime (Simulation 4) n'aurait pas été
+   aussi clairement identifié si le WAF, TheHive et Shuffle avaient déjà
+   été en place dès le départ.
+3. **C'est la méthodologie GRC standard.** Établir une baseline avant
+   remédiation, puis mesurer l'écart après remédiation, est la démarche
+   attendue dans toute évaluation de maturité sécurité sérieuse (NIST CSF
+   2.0 y compris) — ce lab suit cette méthodologie plutôt que d'annoncer
+   une architecture "sécurisée" sans preuve mesurée à l'appui.
+
+La Phase A n'est donc pas une étape "attaque pour attaquer" séparée du
+reste du projet — c'est la mesure de référence sans laquelle la Phase B
+(durcissement) et la Phase C (revalidation) n'auraient aucune valeur
+démonstrative.
+
+
 **Phase B — Durcissement + Automatisation :**
 
 ![Phase B Topology](network/diagrams/phase-b-topology.jpg)
