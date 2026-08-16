@@ -89,10 +89,10 @@ Renforcement des politiques de sécurité appliquées aux postes clients Windows
 
 
 
-| Politique | Valeur configurée | Effet |
-|---|---|---|
+| Politique | Valeur configurée |
+|---|---|
 | Turn off Microsoft Defender Antivirus | **Disabled** | 
-| Turn off real-time protection | **Enabled**  | 
+| Turn off real-time protection | **Disabled**  | 
 
 ![Audit Credential Validation](screenshots/windows-client-hardening/03-audit-credential-validation.png)
 ![Audit User Account Management](screenshots/windows-client-hardening/04-audit-user-account-management.png)
