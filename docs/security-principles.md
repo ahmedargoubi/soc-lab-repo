@@ -63,7 +63,7 @@ Aucune couche unique n'est traitée comme suffisante :
 |---|---|---|
 | Filtrage réseau | OPNsense | Bloque le pivot inter-zones |
 | Filtrage applicatif | WAF (SafeLine, devant DVWA) | Bloque les attaques HTTP connues avant qu'elles n'atteignent l'application |
-| Détection host-based | Wazuh (agents), Sysmon *(à venir)* | Détecte l'activité malveillante sur l'hôte, y compris quand le trafic réseau est légitime |
+| Détection host-based | Wazuh (agents) | Détecte l'activité malveillante sur l'hôte, y compris quand le trafic réseau est légitime |
 | Threat Intelligence | MISP, VirusTotal | Corrèle les IOCs observés avec des indicateurs connus |
 | Réponse automatisée | Shuffle (SOAR) | Réduit le temps entre détection et confinement (MTTR) sans attendre une intervention manuelle |
 | Suivi / gouvernance | TheHive | Garantit qu'une action automatisée reste documentée, vérifiée et formellement close par un humain |
