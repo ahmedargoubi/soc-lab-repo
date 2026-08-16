@@ -65,7 +65,7 @@ détection → réponse → investigation → renseignement :
 | **VirusTotal** | Enrichissement — vérification de hashs/IOCs via l'intégration Wazuh↔VirusTotal | Security_LAN |
 | **Shuffle** | SOAR — orchestre la réponse automatisée (blocage IP, notification, création de case) | `192.168.9.144:3001` |
 | **TheHive** | Case management — transforme les alertes qualifiées en dossiers d'investigation suivis | `192.168.9.133` |
-| **Email (SMTP)** | Notification de l'analyste SOC dès qu'une réponse automatisée est déclenchée | — |
+
 
 Le flux logique à l'intérieur de Security_LAN :
 
