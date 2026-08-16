@@ -152,11 +152,8 @@ Collecte forensique post-incident sur les hôtes compromis : artefacts, processu
 | SOAR (Shuffle) — détection & blocage automatique brute-force | ✅ Testé de bout en bout | Wazuh → Shuffle → blocage actif de l'IP → TheHive → email — [`phase-b-brute-force-blocking.md`](reports/phase-b-hardening/config/phase-b-brute-force-blocking.md) |
 | TheHive — case management | ✅ Fonctionnel | Intégré au pipeline ci-dessus |
 | SafeLine WAF (DMZ) | ✅ Déployé | [`config/safeline-waf.md`](reports/phase-b-hardening/config/safeline-waf.md) |
-| Durcissement Active Directory (LAPS, LLMNR/NBT-NS, Kerberos) | 🟡 En cours | [`config/phase-b-ad-hardening.md`](reports/phase-b-hardening/config/phase-b-ad-hardening.md) |
-| Durcissement postes clients Windows | 🟡 En cours | [`config/windows-client-hardening.md`](reports/phase-b-hardening/config/windows-client-hardening.md) |
-| MFA — Windows/AD logon | ⏳ Non fait | Nécessiterait un agent dédié (ex. privacyIDEA Credential Provider) |
-| Règles Wazuh/Suricata personnalisées | ⏳ À venir | |
-| Déploiement Sysmon | ⏳ À venir | |
+| Durcissement Active Directory (LAPS, LLMNR/NBT-NS, Kerberos) | ✅ Configuré | [`config/phase-b-ad-hardening.md`](reports/phase-b-hardening/config/phase-b-ad-hardening.md) |
+| Durcissement postes clients Windows | ✅ Configurés | [`config/windows-client-hardening.md`](reports/phase-b-hardening/config/windows-client-hardening.md) |
 
 ⚠️ **Point GRC à noter :** le MFA n'a pas été centralisé sur un seul mécanisme comme prévu initialement (privacyIDEA partout) — contrainte de temps. Résultat : trois approches différentes selon le point d'accès (TOTP natif OPNsense, PAM Google Authenticator pour SSH, rien encore pour Windows/AD). Ce compromis est documenté en détail dans chaque guide `config/` correspondant, avec la recommandation de centraliser via privacyIDEA en itération future.
 
@@ -229,10 +226,4 @@ projet sont documentés dans
 
 ---
 
-## 🗺️ Roadmap
 
-Voir [`docs/roadmap.md`](docs/roadmap.md) pour le détail des trois phases et leur avancement.
-
----
-
-*Projet en cours — Phase A (Baseline) terminée, Phase B (Durcissement) en cours.*
