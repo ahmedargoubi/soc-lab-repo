@@ -63,7 +63,8 @@ Aucune couche unique n'est traitée comme suffisante :
 |---|---|---|
 | Filtrage réseau | OPNsense | Bloque le pivot inter-zones |
 | Filtrage applicatif | WAF (SafeLine, devant DVWA) | Bloque les attaques HTTP connues avant qu'elles n'atteignent l'application |
-| Détection host-based | Wazuh (agents) | Détecte l'activité malveillante sur l'hôte, y compris quand le trafic réseau est légitime |
+| Détection host-based (temps réel) | Wazuh (agents), Sysmon *(à venir)* | Détecte l'activité malveillante sur l'hôte, y compris quand le trafic réseau est légitime |
+| Investigation forensique (post-incident) | Velociraptor | Collecte d'artefacts, timeline, mémoire sur un hôte déjà compromis — répond à la question que Wazuh seul ne couvre pas : *"qu'est-ce que l'attaquant a fait exactement une fois dedans ?"* |
 | Threat Intelligence | MISP, VirusTotal | Corrèle les IOCs observés avec des indicateurs connus |
 | Réponse automatisée | Shuffle (SOAR) | Réduit le temps entre détection et confinement (MTTR) sans attendre une intervention manuelle |
 | Suivi / gouvernance | TheHive | Garantit qu'une action automatisée reste documentée, vérifiée et formellement close par un humain |
@@ -71,7 +72,14 @@ Aucune couche unique n'est traitée comme suffisante :
 La Simulation 4 est l'exemple concret qui justifie cet empilement : la
 segmentation seule n'aurait pas suffi (trafic AD légitime), mais la
 détection Wazuh, elle, a identifié l'attaque quasi instantanément
-(Pass-the-Hash, Rule 92652).
+(Pass-the-Hash, Rule 92652). Ce même incident illustre aussi pourquoi la
+détection temps réel (Wazuh) et l'investigation forensique (Velociraptor)
+sont deux couches distinctes et non substituables : Wazuh dit *qu'une*
+attaque a eu lieu et donne le premier signal ; Velociraptor permet ensuite
+de reconstituer *ce qui s'est réellement passé* sur l'hôte (artefacts,
+processus, persistance) — un signal d'alerte seul ne suffit pas à clore
+une investigation. Voir
+[`DFIR/velociraptor-dfir.md`](../DFIR/velociraptor-dfir.md).
 
 ---
 
@@ -141,7 +149,8 @@ réel n'a pas cette liberté ; ce lab ne se l'accorde pas non plus.
 | Principe | Application dans ce lab |
 |---|---|
 | Segmentation par zone de confiance | 6 zones OPNsense, first-match/deny-by-default |
-| Défense en profondeur | Réseau + applicatif (WAF) + host-based (Wazuh) + threat intel (MISP/VirusTotal) |
+| Défense en profondeur | Réseau + applicatif (WAF) + host-based (Wazuh) + forensique (Velociraptor) + threat intel (MISP/VirusTotal) |
+| Détection temps réel ≠ investigation forensique | Wazuh donne le signal, Velociraptor reconstitue ce qui s'est réellement passé sur l'hôte |
 | Gaps de conception assumés et mesurés | Legacy_LAN sans agent, testé et documenté (Sim 2) |
 | Automatisation rapide, contrôle humain préservé | Shuffle bloque automatiquement, TheHive impose une vérification humaine avant clôture |
 | Durcissement progressif et honnête | Phase A (baseline) → B (durcissement) → C (mesure de l'amélioration) |
