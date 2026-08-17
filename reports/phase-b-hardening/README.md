@@ -1,6 +1,5 @@
 # Phase B — Durcissement + Automatisation
 
-🟢 **En cours.**
 
 ## Avancement
 
