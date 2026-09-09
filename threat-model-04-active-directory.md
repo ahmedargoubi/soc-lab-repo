@@ -5,8 +5,8 @@
 ```mermaid
 flowchart TD
     A(["Attaquant — LLMNR/NBT-NS\nPoisoning sur User_LAN"]) --> B{"LLMNR/NBT-NS désactivé\nsur les postes clients ?"}
-    B -- "Oui (cible)" --> C["Empoisonnement impossible\n→ chaîne arrêtée ici"]
-    B -- "Non (état actuel)" --> D["Hash NTLMv2 capturé"]
+    B -- "Oui (confirmé Phase B)" --> C["Empoisonnement impossible\n→ chaîne arrêtée ici"]
+    B -- "Non (état Phase A)" --> D["Hash NTLMv2 capturé"]
 
     D --> E{"Hash cassé hors-ligne\n(John the Ripper) ?"}
     E -- "Non" --> F["Attaquant bloqué\n(hash inutilisable)"]
@@ -27,25 +27,40 @@ flowchart TD
 
 ## Seuils / logique réelle
 
-- **Détection confirmée rapide et fiable** (`H → Oui`) : c'est le point
-  fort mesuré en Phase A — Wazuh Rule `92652` a détecté le Pass-the-Hash
-  quasi instantanément.
-- **Mais la détection reste manuelle** (`K → Non`) : contrairement au
-  brute-force SSH (5ᵉ modèle de menace), ce type d'alerte n'est pas
-  aujourd'hui branché sur Shuffle pour une réponse automatique — c'est
-  une extension naturelle et concrète du pipeline SOAR déjà construit.
+- **La branche `B → Oui` reflète désormais l'état réel confirmé en
+  Phase B** : LLMNR est désactivé (GPO `Turn off multicast name
+  resolution`, plus le durcissement complémentaire
+  `Turn off smart multi-homed name resolution`), et NBT-NS est désactivé
+  via une préférence de registre GPO (`NetbiosOptions`) — voir
+  [`phase-b-ad-hardening.md`](../reports/phase-b-hardening/config/phase-b-ad-hardening.md),
+  section 3. **La chaîne d'attaque telle que rejouée en Phase A est
+  désormais coupée à sa toute première étape.**
+- **Détection confirmée rapide et fiable** (`H → Oui`) reste valable
+  comme filet de sécurité supplémentaire si un autre vecteur de capture
+  de hash venait à être trouvé (ex. autre protocole de résolution de nom,
+  ou attaque de relais NTLM plutôt que LLMNR).
+- **Mais la détection reste manuelle** (`K → Non`) : ce type d'alerte
+  n'est pas aujourd'hui branché sur Shuffle pour une réponse automatique
+  — une extension naturelle du pipeline SOAR déjà construit pour le
+  brute-force SSH (5ᵉ modèle de menace).
 - **BloodHound reste un angle mort total** (`O → Non`) : aucun contrôle
-  identifié à ce jour pour cette étape spécifique de reconnaissance.
+  identifié à ce jour pour cette étape spécifique de reconnaissance —
+  reste vrai même après le durcissement LLMNR/SMB, puisqu'elle ne dépend
+  pas de la capture de hash.
 
 ## Résultat mesuré (Phase A)
 
 Chaîne complète réussie jusqu'à la compromission **Domain Admin**.
 Détection Wazuh confirmée rapide sur l'étape Pass-the-Hash — mais sans
-containment automatique, la chaîne d'attaque a le temps d'aboutir avant
-toute réponse humaine.
+containment automatique, la chaîne d'attaque a eu le temps d'aboutir
+avant toute réponse humaine.
 
 ## Statut Phase B
 
-🔴 **La branche `B → Non` reste la situation réelle** : le durcissement
-AD (désactivation LLMNR/NBT-NS) est 🟡 en cours, non confirmé terminé —
-le point d'entrée de toute la chaîne reste donc ouvert aujourd'hui.
+✅ **Point d'entrée de la chaîne fermé.** LLMNR/NBT-NS désactivés —
+l'attaque telle que menée en Phase A ne peut plus démarrer de la même
+façon. Restent ouverts : l'absence de containment automatique sur
+détection Pass-the-Hash (`K → Non`), et l'absence totale de contrôle sur
+la reconnaissance BloodHound (`O → Non`) — deux points qui ne dépendent
+pas du durcissement LLMNR/SMB et qui restent des angles morts
+indépendants à traiter séparément.
