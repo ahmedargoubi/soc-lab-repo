@@ -16,9 +16,9 @@ flowchart TD
     G -- "Oui" --> I["Alerte Wazuh (niveau critique)\n→ Isoler l'hôte du réseau"]
 
     D --> J{"Tentative de propagation\nSMB (port 445) vers\nd'autres hôtes ?"}
-    J -- "Oui" --> K{"AD/postes durcis\n(signature SMB active) ?"}
-    K -- "Non (Phase B incomplète)" --> L["Propagation possible\nvers d'autres hôtes User_LAN"]
-    K -- "Oui" --> M["Propagation bloquée"]
+    J -- "Oui" --> K{"Signature SMB forcée\n(GPO) ?"}
+    K -- "Oui (confirmé Phase B)" --> M["Propagation bloquée —\ncommunication SMB non signée rejetée"]
+    K -- "Non" --> L["Propagation possible\nvers d'autres hôtes User_LAN"]
     J -- "Non" --> N["Confiné à l'hôte initial"]
 ```
 
@@ -35,6 +35,13 @@ flowchart TD
   implémentée** — contrairement au blocage IP automatique du pipeline
   SSH, il n'existe pas aujourd'hui d'action Shuffle qui isole
   automatiquement un hôte sur détection FIM critique.
+- **La branche `K` reflète l'état réel confirmé en Phase B** : la
+  signature SMB est désormais forcée par GPO (`Digitally sign
+  communications (if client agrees)` **et** `(always)`, toutes deux
+  activées — voir
+  [`phase-b-ad-hardening.md`](../reports/phase-b-hardening/config/phase-b-ad-hardening.md),
+  section 4). Le trafic SMB non signé, celui qu'EternalBlue exploitait en
+  Phase A, est désormais rejeté.
 
 ## Résultat mesuré (Phase A)
 
@@ -43,8 +50,10 @@ confirmée rapide via FIM.
 
 ## Statut Phase B
 
-🔴 **Vecteur de propagation non fermé.** Le durcissement AD/postes
-clients (signature SMB, entre autres) est encore 🟡 en cours, non
-confirmé terminé — la branche `K → Non` reste donc la situation réelle
-actuelle. L'isolation automatique sur détection critique (`G → Oui → I`)
-n'existe pas encore comme automatisation — reste manuelle.
+✅ **Vecteur de propagation SMB fermé.** La signature SMB forcée
+(`K → Oui`) bloque désormais le mécanisme qui permettait la propagation
+latérale de type EternalBlue en Phase A. Reste ouvert : l'isolation
+automatique sur détection FIM critique (`G → Oui → I`) n'existe toujours
+pas comme automatisation — seule la détection/alerte est en place, la
+containment reste manuelle. Sysmon (détection comportementale fine)
+reste également ⏳ à venir.
