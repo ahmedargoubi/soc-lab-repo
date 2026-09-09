@@ -55,10 +55,4 @@ une IP légitime pourrait en théorie déclencher un blocage contre un tiers
 innocent (voir [`threat-model.md`](threat-model.md), section 4.2) — ce
 risque est propre à l'automatisation elle-même, pas à la détection.
 
-## Amélioration identifiée pour les autres modèles de menace
 
-Ce pipeline est le modèle à suivre pour combler les points faibles
-identifiés dans les 4 autres fichiers de threat modeling : branchement de
-la règle Pass-the-Hash (`92652`) sur Shuffle pour un containment
-automatique AD, et définition de seuils FIM à deux niveaux pour
-l'isolation automatique en cas de ransomware.
